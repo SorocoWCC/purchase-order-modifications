@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+<!-- Inherit Purchase Order Form View -->
+<record model="ir.ui.view" id="purchase_view_order_form">
+    <field name="name">purchase_view_order_form_heredada</field>
+    <field name="model">purchase.order</field>
+    <field name="inherit_id" ref="purchase.purchase_order_form"/>
+    <field name="arch" type="xml">
+ 	<field name="product_id" position="after">
+
+      	<field  name="order_line_user"  />
+        </field>	
+
+	<field name="date_order" position="after">
+      	<field  name="imagen_pago" widget='image' height="50" attrs="{'invisible': [('state','=','draft')], 'readonly': [('state', '=', 'done')]}"/>
+        </field>
+
+	<field name="partner_id" position="after">
+      	<field  name="peso_lleno" attrs="{'readonly': ['|', ('state','!=', 'draft')]}"/>
+      	<field  name="peso_vacio" attrs="{'readonly': ['|', ('state','!=', 'draft')]}"/>
+        </field>
+
+	<notebook position="inside" >
+
+		<page string="Certificado" >
+			<group>
+				<field  name="cliente"/>
+				<field  name="material_procesado"/>
+				<field  name="cantidad"/>
+				<field  name="periodo"/>
+				<field  name="co2"/>
+			</group>
+
+    		</page>
+		<page string="Otros" >
+			<group>
+				<field  name="cajero_id"/>
+				<field  name="fecha_pago"/>
+			</group>
+
+    		</page>
+		
+	</notebook>
+
+
+	<field name="taxes_id" position="attributes">
+	<attribute name="invisible">True</attribute>
+	</field>
+
+	<field name="date_order" position="attributes">
+	<attribute name="readonly">True</attribute>
+	</field>
+
+
+	<field name="name" position="attributes">
+	<attribute name="invisible">True</attribute>
+	</field>
+
+	<field name="date_planned" position="attributes">
+	<attribute name="invisible">True</attribute>
+	</field>
+
+	<field name="notes" position="attributes">
+	<attribute name="invisible">True</attribute>
+	</field>
+
+	<button name="print_quotation" position="attributes">
+	<attribute name="invisible">True</attribute>
+	</button>
+
+
+	<button name="view_picking" position="attributes">
+	<attribute name="invisible">True</attribute>
+	</button>
+
+	<button name="invoice_open" position="attributes">
+	<attribute name="invisible">True</attribute>
+	</button>
+
+	<button name="purchase_confirm" position="replace">
+	<button name="purchase_confirm" string="Confirmar Pedido" attrs="{'invisible': ['|', ('state','!=', 'confirmed')]}"/>
+	</button>
+
+	<field name="order_line" position="replace">
+	                            <field name="order_line" attrs="{'readonly': ['|', ('state','!=', 'draft')]}">
+                                	<tree string="Purchase Order Lines" editable="bottom">
+                                    <field name="product_id" on_change="onchange_product_id(parent.pricelist_id,product_id,0,False,parent.partner_id, parent.date_order,parent.fiscal_position,date_planned,False,False,parent.state,context)"/>
+      				    <field  name="imagen_lleno" widget='image' height="65" weight="65" />
+      				    <field  name="imagen_vacio" widget='image' height="65" weight="65" />
+                                    <field name="name"/>
+                                    <field name="product_qty" on_change="onchange_product_id(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id,parent.date_order,parent.fiscal_position,date_planned,name,False,parent.state,context)"/>
+                                    <field name="price_unit"/>
+                                    <field name="price_subtotal"/>
+                                    <field name="date_planned" invisible="1"/>
+                                    <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" invisible="1"/>
+                                    <field name="account_analytic_id" groups="purchase.group_analytic_accounting" domain="[('type','not in',('view','template'))]" invisible="1"/>
+                                    
+                                    <field name="product_uom" groups="product.group_uom" on_change="onchange_product_uom(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id, parent.date_order,parent.fiscal_position,date_planned,name,False,parent.state,context)"/>
+
+                                    <field name="taxes_id" widget="many2many_tags" domain="[('parent_id','=',False),('type_tax_use','!=','sale')]" invisible="1"/>
+
+                                    <field name="state" invisible="1"/>
+
+                                	</tree>
+	                            </field>
+	</field>
+	<button name="action_cancel_draft" position="replace">
+	<button name="action_cancel_draft" invisible="1"/>
+	</button>
+
+
+	<button name="bid_received" position="replace">
+	<button name="bid_received" invisible="1"/>
+	</button>
+
+	<button name="purchase_approve" position="replace">
+	<button name="purchase_approve" invisible="1"/>
+	</button>
+
+
+<!-- Boton para pagar la factura --> 
+	<button name="action_cancel" position="before">
+ 	 <button name="action_quotation_paid" string="Pagar" type="object"
+    	 class="oe_highlight" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'approved')]}"/>
+        </button>
+
+<!-- Boton para Validar la factura --> 
+	<button name="action_cancel" position="before">
+ 	 <button name="action_validation" string="Validar" type="object"
+    	 class="oe_highlight" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'draft')]}"/>
+        </button>
+
+<!-- Boton para pagar transferir--> 
+	<button name="action_cancel" position="before">
+ 	 <button name="action_quotation_transfer" string="Tranferir" type="object"
+    	 class="oe_highlight" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent'), ('state','!=', 'draft')]}"/>
+        </button>
+
+<!-- Boton para tomar fotos --> 
+	<button name="view_picking" position="before">
+	<button name="action_take_picture" type="object" class="oe_inline oe_stat_button" icon="fa-camera" string="Tomar Fotos "/>
+        </button>
+
+<!-- Mostar Prestamo --> 
+	<button name="action_take_picture" position="after">
+	<button name="action_allowance" type="action" class="oe_inline oe_stat_button" icon="fa-money" attrs="{'invisible': [('prestamo_info','!=','Si Rebajar')]}">
+	
+	<field name="prestamo_info" widget="statinfo" />
+        </button>
+        </button>
+
+<!-- Botones para Agregar Productos --> 
+        <field name="notes" position="before">
+
+		        <button name="action_aluminio" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Aluminio" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_cobre" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Cobre" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_bronce" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Bronce" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_chatarra" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Chatarra" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_papel_primera" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Papel 1" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_papel_segunda" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Papel 2" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_papel_periodico" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Periodico" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_carton" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Carton" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_bateria" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Bateria" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_tar_comp" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="T.Computadora" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_plastico_pet" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Plastico Pet" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_microondas" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Microondas" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_radiador_ca" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="R.Cobre/Aluminio" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_radiador_cb" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="R.Cobre/Bronce" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_catalizador_generico" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Cat.Genérico" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_catalizador_original" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Cat.Original" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_vidrio" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Vidrio" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_plastico_lavadora" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="P.Lavadora" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+		        <button name="action_caja_plastica" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Caja Plastica" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
+                        </button>
+
+
+
+
+        </field>
+       
+    </field>
+</record>
+
+<!-- Inherit Purchase Order Tree View -->
+<record model="ir.ui.view" id="purchase_view_tree_form">
+    <field name="name">purchase_view_order_tree_heredada</field>
+    <field name="model">purchase.order</field>
+    <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+    <field name="arch" type="xml">
+
+ 	<field name="amount_total" position="before">
+      	<field  name="informacion" />
+        </field>
+
+ 	<field name="date_order" position="after">
+      	<field  name="fecha_pago" />
+        </field>
+
+	<field name="minimum_planned_date" position="attributes">
+	<attribute name="invisible">True</attribute>
+	</field>
+
+	<field name="amount_untaxed" position="attributes">
+	<attribute name="invisible">True</attribute>
+	</field>
+
+
+	<field name="origin" position="attributes">
+	<attribute name="invisible">True</attribute>
+	</field>
+
+        </field>
+	
+</record>
+
+<!-- Inherit User Form  View -->
+<record model="ir.ui.view" id="user_view_form">
+    <field name="name">user_view_form_inhererti</field>
+    <field name="model">res.users</field>
+    <field name="inherit_id" ref="base.view_users_form"/>
+    <field name="arch" type="xml">
+
+	<notebook position="inside" >
+		<page string="Compras">
+			<group>
+				<field  name="purchase_type_user" />
+			</group>				   
+		</page>
+	</notebook>
+    </field>
+	
+</record>
+
+<!-- Inherit Product Form  View -->
+<record model="ir.ui.view" id="product_template_view_form">
+    <field name="name">product_template_view_form_inherit</field>
+    <field name="model">product.template</field>
+    <field name="inherit_id" ref="product.product_template_only_form_view"/>
+    <field name="arch" type="xml">
+
+	<notebook position="inside" >
+		<page string="Validación">
+			<group>
+				<field  name="sumar_validacion" />
+				<field  name="precio_venta_informe" />
+			</group>				   
+		</page>
+	</notebook>
+    </field>
+	
+</record>
+
+
+    </data>
+</openerp>
