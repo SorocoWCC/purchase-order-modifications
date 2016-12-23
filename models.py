@@ -54,7 +54,7 @@ class purchase_order(models.Model):
     periodo = fields.Char(string="Periodo")
     peso_lleno = fields.Float(string="Peso Lleno")
     peso_vacio = fields.Float(string="Peso Vacio")
-    pago = fields.Selection ([('regular','Regular'), ('muy','***MUY PAGA***')], string='Pago')
+    pago = fields.Selection ([('regular','Regular'), ('muy','***MUY PAGA***'), ('caja_chica','Caja Chica')], string='Pago')
     informacion = fields.Char(compute='_update_info', store=True, string="Avisos")
     prestamo_info = fields.Char(compute='_action_allowance', store=True, string="Avisos")
     purchase_info_validation = fields.Char(compute='_action_purchase_creation', store=True, string="validacion")
