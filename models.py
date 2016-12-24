@@ -58,18 +58,21 @@ class purchase_order(models.Model):
     informacion = fields.Char(compute='_update_info', store=True, string="Avisos")
     prestamo_info = fields.Char(compute='_action_allowance', store=True, string="Avisos")
     purchase_info_validation = fields.Char(compute='_action_purchase_creation', store=True, string="validacion")
+    cierre_info_validation = fields.Char(compute='_action_cierre_caja_chica_validacion', store=True, string="validacion")
 
 # ---------------------------- FIN CLASE HEREDADA - PURCHASE ORDER ------------------------------------
 
 
-# Actualizar el campo informacion cuando la factura es ***MUY PAGA***
+# Actualizar el campo informacion con el tipo de pago
     @api.one
     @api.depends('pago')
     def _update_info(self):
 	if str(self.pago) == "muy" :
 		self.informacion = "***MUY PAGA***"
+	elif str(self.pago) == "caja_chica":
+		self.informacion = "Caja Chica"
 	else:
-		self.informacion = ""
+		self.informacion = "Regular"
 
 # Calcular CO2
     @api.one
@@ -104,18 +107,40 @@ class purchase_order(models.Model):
 # Marcar la factura como pagada
     @api.one
     def action_quotation_paid(self):
-	# valida que solo el cajero o super usuario puedan marcar la factura como pagada
-	res_cierre = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new')])
-	if len(res_cierre) == 0 :
-		if str(self.env.user.purchase_type_user) != "super":
-			raise Warning ("Usuario no autorizado para pagar facturas")	
-	# verifica que se adjunte la imagen
-	if str(self.imagen_pago) == "None":
-		raise Warning ("Por Favor adjunte la imagen de pago.")	
 
-        self.state = 'done'
-	self.cajero_id = str(self.env.user.name)
-	self.fecha_pago = fields.Datetime.now()
+	cajero_cierre_regular = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new'), ('tipo', '=', 'regular')])
+	cajero_cierre_caja_chica = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new'), ('tipo', '=', 'caja_chica')])
+	
+	if str(self.pago) == "caja_chica" :
+
+		if str(cajero_cierre_caja_chica.cajero) == str(self.env.user.name) :
+			self.state = 'done'
+			self.cajero_id = str(self.env.user.name)
+			self.fecha_pago = fields.Datetime.now()
+		else:
+			raise Warning ("Usuario no autorizado para pagar facturas")	
+
+	elif str(self.pago) == "regular" :
+		# verifica que se adjunte la imagen
+		if str(self.imagen_pago) == "None":
+			raise Warning ("Por Favor adjunte la imagen de pago.")
+
+		if str(cajero_cierre_regular.cajero) == str(self.env.user.name) :
+			self.state = 'done'
+			self.cajero_id = str(self.env.user.name)
+			self.fecha_pago = fields.Datetime.now()
+		else:
+			raise Warning ("Usuario no autorizado para pagar facturas")
+
+	# Cualquier usuario puede pagar las ***muy paga	***	
+	elif str(self.pago) == "muy" :
+		self.state = 'done'
+		self.cajero_id = str(self.env.user.name)
+		self.fecha_pago = fields.Datetime.now()
+	
+	else:
+		raise Warning ("Usuario no autorizado para pagar facturas")	
+			
 	if str(self.informacion) == "Listo Para Revisar | ***MUY PAGA***":
 		self.informacion = "***MUY PAGA***"
 
@@ -162,6 +187,15 @@ class purchase_order(models.Model):
 	res_tipo = self.env['res.users'].search([('name', '=', str(self.env.user.name))])
 	if str(res_tipo.name) == "limitado" or str(res_cierre) == str(self.env.user.name) :
 		raise Warning ("Usuario no autorizado para crear ordenes de Compra")
+
+#  Valida si hay un cirre de caja chica abierto para poder asociar la orden de compra 
+    @api.one
+    @api.depends('pago')
+    def _action_cierre_caja_chica_validacion(self):
+    	cierres_caja_chica=self.env['cierre'].search([['state', '=', 'new'], ['tipo', '=', 'caja_chica']])
+    	print "-------------> " + str(len(cierres_caja_chica)) + "    " + str(cierres_caja_chica)
+    	if str(self.pago) == "caja_chica" and len(cierres_caja_chica) < 1 :
+    		raise Warning ("Error: No hay cierre de caja chica abierto. Seleccione otro tipo de pago o proceda a crear un cierre de caja chica")
 
 # ----------------------------AGREGAR LINEAS DE PRODUCTO ------------------------------------
 # Agregar linea Pedido Aluminio
