@@ -95,11 +95,13 @@ class purchase_order(models.Model):
 
 		if str(res_user.purchase_type_user) != "limitado" and order_line.product_id.sumar_validacion == False:
 			if str(order_line.imagen_lleno) == "None" or str(order_line.imagen_vacio) == "None": 
-				raise Warning ("Por favor adjunte una imagen en la linea del producto: " + str(order_line.name))	
+				#raise Warning ("Por favor adjunte una imagen en la linea del producto: " + str(order_line.name))
+				print "Validacion Imagenes"	
 
 		if  str(res_user.purchase_type_user) != "limitado":
 			if peso > float(self.peso_lleno) or float(self.peso_lleno) == 0 or float(self.peso_vacio) == 0 :
-				raise Warning ("Error en los pesos (Productos - Peso lleno - Peso Vacio)")			
+				#raise Warning ("Error en los pesos (Productos - Peso lleno - Peso Vacio)")	
+				print "Validacion Pesos"		
 
         self.state= 'confirmed'
 
