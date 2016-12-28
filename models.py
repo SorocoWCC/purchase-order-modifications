@@ -54,7 +54,8 @@ class purchase_order(models.Model):
     periodo = fields.Char(string="Periodo")
     peso_lleno = fields.Float(string="Peso Lleno")
     peso_vacio = fields.Float(string="Peso Vacio")
-    pago = fields.Selection ([('regular','Regular'), ('muy','***MUY PAGA***'), ('caja_chica','Caja Chica')], string='Pago')
+    pago = fields.Selection ([('regular','Regular'), ('muy','***MUY PAGA***'), ('caja_chica','Caja Chica')], string='Metodo de Pago')
+    pago_caja = fields.Selection ([('pendiente','Pendiente'),('pagado','Pagado')], string='Pago', default="pendiente", readonly=True)
     informacion = fields.Char(compute='_update_info', store=True, string="Avisos")
     prestamo_info = fields.Char(compute='_action_allowance', store=True, string="Avisos")
     purchase_info_validation = fields.Char(compute='_action_purchase_creation', store=True, string="validacion")
@@ -116,9 +117,9 @@ class purchase_order(models.Model):
 	if str(self.pago) == "caja_chica" :
 
 		if str(cajero_cierre_caja_chica.cajero) == str(self.env.user.name) :
-			self.state = 'done'
 			self.cajero_id = str(self.env.user.name)
 			self.fecha_pago = fields.Datetime.now()
+			self.pago_caja = 'pagado'
 		else:
 			raise Warning ("Usuario no autorizado para pagar facturas")	
 
@@ -128,17 +129,17 @@ class purchase_order(models.Model):
 			raise Warning ("Por Favor adjunte la imagen de pago.")
 
 		if str(cajero_cierre_regular.cajero) == str(self.env.user.name) :
-			self.state = 'done'
 			self.cajero_id = str(self.env.user.name)
 			self.fecha_pago = fields.Datetime.now()
+			self.pago_caja = 'pagado'
 		else:
 			raise Warning ("Usuario no autorizado para pagar facturas")
 
 	# Cualquier usuario puede pagar las ***muy paga	***	
 	elif str(self.pago) == "muy" :
-		self.state = 'done'
 		self.cajero_id = str(self.env.user.name)
 		self.fecha_pago = fields.Datetime.now()
+		self.pago_caja = 'pagado'
 	
 	else:
 		raise Warning ("Usuario no autorizado para pagar facturas")	
@@ -183,19 +184,23 @@ class purchase_order(models.Model):
     @api.one
     @api.depends('partner_id')
     def _action_purchase_creation(self):
-	res_cierre = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new')])
-	if len(res_cierre) > 0 :
-		raise Warning ("Usuario no autorizado para crear ordenes de Compra")	
-	res_tipo = self.env['res.users'].search([('name', '=', str(self.env.user.name))])
-	if str(res_tipo.name) == "limitado" or str(res_cierre) == str(self.env.user.name) :
-		raise Warning ("Usuario no autorizado para crear ordenes de Compra")
+        cajero_cierre_regular = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new'), ('tipo', '=', 'regular')])
+        cajero_cierre_caja_chica = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new'), ('tipo', '=', 'caja_chica')])
+        print str(cajero_cierre_regular.cajero) + str(cajero_cierre_caja_chica.cajero)
+        if str(self.pago) == "regular" :
+            if str(cajero_cierre_regular.cajero) == str(self.env.user.name) :
+                raise Warning ("Usuario no autorizado para crear facturas") 
+        if str(self.pago) == "caja_chica" :
+            if str(cajero_cierre_caja_chica.cajero) == str(self.env.user.name) :
+                raise Warning ("Usuario no autorizado para crear facturas")
+
+
 
 #  Valida si hay un cirre de caja chica abierto para poder asociar la orden de compra 
     @api.one
     @api.depends('pago')
     def _action_cierre_caja_chica_validacion(self):
     	cierres_caja_chica=self.env['cierre'].search([['state', '=', 'new'], ['tipo', '=', 'caja_chica']])
-    	print "-------------> " + str(len(cierres_caja_chica)) + "    " + str(cierres_caja_chica)
     	if str(self.pago) == "caja_chica" and len(cierres_caja_chica) < 1 :
     		raise Warning ("Error: No hay cierre de caja chica abierto. Seleccione otro tipo de pago o proceda a crear un cierre de caja chica")
 
