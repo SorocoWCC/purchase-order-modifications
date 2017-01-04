@@ -112,12 +112,19 @@ class purchase_order(models.Model):
 
 	cajero_cierre_regular = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new'), ('tipo', '=', 'regular')])
 	cajero_cierre_caja_chica = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new'), ('tipo', '=', 'caja_chica')])
+	
+	cierre_regular = self.env['cierre'].search([('state', '=', 'new'), ('tipo', '=', 'regular')])
+	cierre_caja_chica = self.env['cierre'].search([('state', '=', 'new'), ('tipo', '=', 'caja_chica')])
+
+	# Valida si el usuario que creo la orden de compra es igual al cajero
+	if str(self.env.user.name) == str(self.validator.name) :
+		raise Warning ("Error: El usuario que valida es pedido de compra es igual al cajero")
 
 	# Valida si hay cierres de caja disponibles para asociarlos
-	if cajero_cierre_regular.id == False :
+	if cierre_regular.id == False :
 		raise Warning ("Error: Proceda a crear un cierre de caja tipo Regular.")
 	if str(self.pago) == "caja_chica":
-		if cajero_cierre_caja_chica.id == False:
+		if cierre_caja_chica.id == False:
 			raise Warning ("Error: Proceda a crear un cierre de caja tipo Caja Chica.")		
 
 	# Valida si el pago se puede realizar
