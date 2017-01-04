@@ -112,7 +112,7 @@ class purchase_order(models.Model):
 
 	cajero_cierre_regular = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new'), ('tipo', '=', 'regular')])
 	cajero_cierre_caja_chica = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new'), ('tipo', '=', 'caja_chica')])
-	
+
 	cierre_regular = self.env['cierre'].search([('state', '=', 'new'), ('tipo', '=', 'regular')])
 	cierre_caja_chica = self.env['cierre'].search([('state', '=', 'new'), ('tipo', '=', 'caja_chica')])
 
@@ -140,6 +140,11 @@ class purchase_order(models.Model):
 			raise Warning ("Usuario no autorizado para pagar facturas")	
 
 	elif str(self.pago) == "regular" :
+
+			# Valida si el usuario que creo la orden de compra es igual al cajero
+		if str(self.env.user.name) == str(self.validator.name) :
+			raise Warning ("Error: El usuario que valida el pedido de compra es igual al cajero")
+		
 		# verifica que se adjunte la imagen
 		if str(self.imagen_pago) == "None":
 			raise Warning ("Por Favor adjunte la imagen de pago.")
