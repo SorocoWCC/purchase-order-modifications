@@ -118,7 +118,7 @@ class purchase_order(models.Model):
 
 	# Valida si el usuario que creo la orden de compra es igual al cajero
 	if str(self.env.user.name) == str(self.validator.name) :
-		raise Warning ("Error: El usuario que valida es pedido de compra es igual al cajero")
+		raise Warning ("Error: El usuario que valida el pedido de compra es igual al cajero")
 
 	# Valida si hay cierres de caja disponibles para asociarlos
 	if cierre_regular.id == False :
