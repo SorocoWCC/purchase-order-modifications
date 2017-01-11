@@ -54,7 +54,7 @@ class purchase_order(models.Model):
     periodo = fields.Char(string="Periodo")
     peso_lleno = fields.Float(string="Peso Lleno")
     peso_vacio = fields.Float(string="Peso Vacio")
-    pago = fields.Selection ([('regular','Regular'), ('muy','***MUY PAGA***'), ('caja_chica','Caja Chica')], string='Metodo de Pago')
+    pago = fields.Selection ([('regular','Regular'), ('muy','***MUY PAGA***'), ('caja_chica','Caja Chica')], string='Metodo de Pago', required=True)
     pago_caja = fields.Selection ([('pendiente','Pendiente'),('pagado','Pagado')], string='Pago', default="pendiente", readonly=True)
     informacion = fields.Char(compute='_update_info', store=True, string="Avisos")
     prestamo_info = fields.Char(compute='_action_allowance', store=True, string="Avisos")
@@ -160,9 +160,11 @@ class purchase_order(models.Model):
 
 	# Cualquier usuario puede pagar las ***muy paga	***	
 	elif str(self.pago) == "muy" :
+		print "-------> La factura es muy paga"
 		self.cajero_id = str(self.env.user.name)
 		self.fecha_pago = fields.Datetime.now()
 		self.pago_caja = 'pagado'
+		self.cierre_id = cajero_cierre_regular.id
 	
 	else:
 		raise Warning ("Usuario no autorizado para pagar facturas")	
