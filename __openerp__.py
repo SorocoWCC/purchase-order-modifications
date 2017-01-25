@@ -25,6 +25,8 @@
     'data': [
         # 'security/ir.model.access.csv',
         'templates.xml',
+        'purchase_order_modifications_report.xml',       
+        'views/report_tiquete_compra.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
