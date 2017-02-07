@@ -12,6 +12,11 @@ class product(models.Model):
     sumar_validacion = fields.Boolean (string='NO sumar en validación:')
     precio_venta_informe = fields.Float (string = 'Precio de Venta Informe:')   
 
+# ----------------------------  CLASE HEREDADA - PROVEEDOR ------------------------------------
+class product(models.Model):
+    _name = 'res.partner'
+    _inherit = 'res.partner'
+    rebajar_mantenimiento = fields.Boolean (string='Rebajar Mantenimiento')
 # ----------------------------  FIN HEREDADA - PRODUCTO ------------------------------------
 
 
@@ -58,8 +63,10 @@ class purchase_order(models.Model):
     pago_caja = fields.Selection ([('pendiente','Pendiente'),('pagado','Pagado')], string='Pago', default="pendiente", readonly=True)
     informacion = fields.Char(compute='_update_info', store=True, string="Avisos")
     prestamo_info = fields.Char(compute='_action_allowance', store=True, string="Avisos")
+    mantenimiento_info = fields.Char(compute='_action_allowance', store=True, string="Avisos")
     purchase_info_validation = fields.Char(compute='_action_purchase_creation', store=True, string="validacion")
-
+    _defaults = { 
+    }
 # ---------------------------- FIN CLASE HEREDADA - PURCHASE ORDER ------------------------------------
 
 
@@ -160,7 +167,6 @@ class purchase_order(models.Model):
 
         # Cualquier usuario puede pagar las ***muy paga *** 
         elif str(self.pago) == "muy" :
-            print "-------> La factura es muy paga"
             self.cajero_id = str(self.env.user.name)
             self.fecha_pago = fields.Datetime.now()
             self.pago_caja = 'pagado'
@@ -197,13 +203,20 @@ class purchase_order(models.Model):
         subprocess.call(str(command), shell=True)
 
 
-# Mostrar prestamo   
+# Captura la informacion relevante del cliente : Prestamos, Mantenimiento y notas  
     @api.one
     @api.depends('partner_id')
     def _action_allowance(self):
+        # Asigna las notas del proveedor y las trae a la order de compra
+        self.notes = self.partner_id.comment
+        # Verifica si se debe realizar un abono al prestamo
         res= self.env['cliente.allowance'].search([('name', '=', str(self.partner_id.name))])
         if len(res) > 0:
-            self.prestamo_info="Si Rebajar" 
+            self.prestamo_info="Prestamo"  
+        # Verifica si se debe rebajar Mantenimiento    
+        if self.partner_id.rebajar_mantenimiento == True:
+            self.mantenimiento_info = "Mantenimiento" 
+            print "*************" + str(self.mantenimiento_info)
 
 #  Validar si el usuario puede crear facturas  
     @api.one
@@ -218,6 +231,7 @@ class purchase_order(models.Model):
         if str(self.pago) == "caja_chica" :
             if str(cajero_cierre_caja_chica.cajero) == str(self.env.user.name) :
                 raise Warning ("Usuario no autorizado para crear facturas")
+
 
 # ----------------------------AGREGAR LINEAS DE PRODUCTO ------------------------------------
 # Agregar linea Pedido Aluminio

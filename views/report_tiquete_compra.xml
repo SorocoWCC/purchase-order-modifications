@@ -73,7 +73,7 @@
                     </tr>
                     <tr>
                       <td>Fecha: </td>
-                      <td><t t-esc="o.date_order"/></td>
+                      <td><span class="oe_editable" t-field="o.date_order"/><br/></td>
                     </tr>
                     <tr>
                       <td>Cliente: </td>

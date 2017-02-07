@@ -63,10 +63,6 @@
 	<attribute name="invisible">True</attribute>
 	</field>
 
-	<field name="notes" position="attributes">
-	<attribute name="invisible">True</attribute>
-	</field>
-
 	<button name="print_quotation" position="attributes">
 	<attribute name="invisible">True</attribute>
 	</button>
@@ -163,9 +159,15 @@
 
 <!-- Mostar Prestamo --> 
 	<button name="action_take_picture" position="after">
-	<button name="action_allowance" type="action" class="oe_inline oe_stat_button" icon="fa-money" attrs="{'invisible': [('prestamo_info','!=','Si Rebajar')]}">
-	
+	<button name="action_allowance" type="action" class="oe_inline oe_stat_button" icon="fa-money" attrs="{'invisible': [('prestamo_info','!=','Prestamo')]}">
 	<field name="prestamo_info" widget="statinfo" />
+        </button>
+        </button>
+
+<!-- Mostar Mantenimiento --> 
+    <button name="action_take_picture" position="after">
+    <button name="action_allowance" type="action" class="oe_inline oe_stat_button" icon="fa-truck" attrs="{'invisible': [('mantenimiento_info','!=','Mantenimiento')]}">
+    <field name="mantenimiento_info" widget="statinfo" />
         </button>
         </button>
 
@@ -246,7 +248,6 @@
 	<attribute name="invisible">True</attribute>
 	</field>
 
-
 	<field name="origin" position="attributes">
 	<attribute name="invisible">True</attribute>
 	</field>
@@ -292,6 +293,20 @@
 	
 </record>
 
+<!-- Inherit Partner Form  View -->
+<record model="ir.ui.view" id="partner_template_view_form">
+    <field name="name">partner_template_view_form_inherit</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form"/>
+    <field name="arch" type="xml">
+ 		<field name="parent_id" position="before">
+ 			<label  string="Rebajar Mantenimiento"/>
+      		<field  name="rebajar_mantenimiento" string="Rebajar Mantenimiento" />
+        </field>
+    </field>
+	
+</record>
+ 
 
     </data>
 </openerp>
