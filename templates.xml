@@ -154,8 +154,9 @@
 --> 
 <!-- Boton para tomar fotos --> 
 	<button name="view_picking" position="before">
-	<button name="action_take_picture" type="object" class="oe_inline oe_stat_button" icon="fa-camera" string="Tomar Fotos "/>
-        </button>
+		<button name="action_take_picture" type="object" class="oe_inline oe_stat_button" icon="fa-camera" string="Tomar Fotos "/>
+		<button name="" type="object" class="oe_inline oe_stat_button" icon="fa-calculator" string="Calcular"/>
+    </button>
 
 <!-- Mostar Prestamo --> 
 	<button name="action_take_picture" position="after">
