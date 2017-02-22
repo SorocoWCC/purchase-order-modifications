@@ -13,11 +13,11 @@
         },
         _waitForFormView: function(){
             var poModule = this;
-
+            //Update this functionality for a full view manager, with view change events
             formViewWatcher = window.setInterval(function() {
                if (viewCont.attr('data-view-type') === 'form') {
                     var buttons = viewCont.find('.oe_stat_button.btn.btn-default.oe_inline');
-                    
+
                     calcButton = viewCont.find('.fa.fa-calculator');
                     console.log('detaching default Handlers');
                     poModule._detachHandlers();
