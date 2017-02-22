@@ -1,25 +1,43 @@
 (function() {
     /*=> Tickets Dashboard Module*/
-    var _model, _view, _controller, body, container,
+    var _model, _view, _controller, body, container, calcButton, formViewWatcher, viewCont,
     purchaseOrdersModule = {
-        _attachHandlers: function(){
-            /*jQuery(document).on('click', function(e){
-
-            });*/
+        container: {},
+        _attachHandlers: function() {
+            calcButton.on('click', function(e){
+                console.log('execute calculation');
+            });
         },
-        _detachHandlers: function(){
+        _detachHandlers: function() {
+            calcButton.off('click');
+        },
+        _waitForFormView: function(){
+            var poModule = this;
 
+            formViewWatcher = window.setInterval(function() {
+               if (viewCont.attr('data-view-type') === 'form') {
+                    var buttons = viewCont.find('.oe_stat_button.btn.btn-default.oe_inline');
+                    
+                    calcButton = viewCont.find('.fa.fa-calculator');
+                    console.log('detaching default Handlers');
+                    poModule._detachHandlers();
+                    console.log('attaching Handlers');
+                    poModule._attachHandlers();
+                    window.clearInterval(formViewWatcher);
+               }
+            }, 1500);
         },
         /*Required module functions*/
-        suspend: function(){
+        suspend: function() {
             this._detachHandlers();
         },
-        init: function(model, view, controller){
+        init: function(model, view, controller) {
             _model = model; _view = view; _controller = controller;
             body = window.SOROCOModel.scope.viewBody;
-            container = window.SOROCOModel.scope.viewContainer;
             console.log('init from purchases module');
-            //this._attachHandlers();
+            viewCont = body.find('.oe_application .oe_view_manager.oe_view_manager_current');
+            this._waitForFormView();
+            //this._unbindDefaultHandlers();
         }
         /* End Required module functions*/
     };

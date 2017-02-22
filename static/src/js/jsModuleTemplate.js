@@ -2,20 +2,20 @@
     /*=> Tickets Dashboard Module*/
     var _model, _view, _controller, body, container,
     customModule = {
-        _attachHandlers: function(){
+        _attachHandlers: function() {
 
         },
-        _detachHandlers: function(){
+        _detachHandlers: function() {
 
         },
         /*Required module functions*/
-        suspend: function(){
+        suspend: function() {
             this._detachHandlers();
         },
-        init: function(model, view, controller){
+        init: function(model, view, controller) {
             _model = model; _view = view; _controller = controller;
             body = window.SOROCOModel.scope.viewBody;
-            container = window.SOROCOModel.scope.viewContainer;
+            container = window.SOROCOModel.scope.customModuleSelector;
 
             this._attachHandlers();
         }

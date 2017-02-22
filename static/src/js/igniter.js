@@ -8,8 +8,6 @@
             srcModel = this;
 
             jQuery(document).ready(function(){
-                console.log('ready');
-                jQuery.notify("Hello World");
                 body = jQuery('body');
 
                 openerp.web.WebClient.include({

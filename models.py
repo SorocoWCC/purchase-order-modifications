@@ -422,4 +422,9 @@ class purchase_order(models.Model):
         else:
             raise Warning ("El producto no existe")
 
+# Agregar linea Caja Plastica
+    @api.one
+    def null_action(self):
+        return False
+
 # ----------------------------AGREGAR LINEAS DE PRODUCTO ------------------------------------
