@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
     <data>
+		<!-- Adds all assets in Odoo -->
+        <template id="assets_backend" name="tickets_dashboard assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+        		<!--These links will be called when loading your Odoo -->
+                <link rel="stylesheet" href="/purchase_order_modifications/static/src/css/cssfile.css"/>
+                <script type="text/javascript" src="/purchase_order_modifications/static/src/js/igniter.js"></script>
+                <script type="text/javascript" src="/purchase_order_modifications/static/src/js/javascriptfile.js"></script>
+            </xpath>
+        </template>
 
 <!-- Inherit Purchase Order Form View -->
 <record model="ir.ui.view" id="purchase_view_order_form">
@@ -214,9 +223,6 @@
 		        <button name="action_caja_plastica" type="object" class="oe_inline oe_stat_button" icon="fa-plus-square" string="Caja Plastica" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'sent') ]}">
                         </button>
 
-
-
-
         </field>
        
     </field>
@@ -228,33 +234,33 @@
     <field name="model">purchase.order</field>
     <field name="inherit_id" ref="purchase.purchase_order_tree"/>
     <field name="arch" type="xml">
+	    
 
- 	<field name="amount_total" position="before">
-      	<field  name="informacion" />
-        </field>
 
- 	<field name="date_order" position="after">
-      	<field  name="fecha_pago" />
-        </field>
+	 	<field name="amount_total" position="before">
+	      	<field  name="informacion" />
+	    </field>
 
-    <field name="fecha_pago" position="after">
-     <field  name="pago_caja" />
-     </field>
+	 	<field name="date_order" position="after">
+	      	<field  name="fecha_pago" />
+	    </field>
 
-	<field name="minimum_planned_date" position="attributes">
-	<attribute name="invisible">True</attribute>
-	</field>
+	    <field name="fecha_pago" position="after">
+	    	<field  name="pago_caja" />
+	    </field>
 
-	<field name="amount_untaxed" position="attributes">
-	<attribute name="invisible">True</attribute>
-	</field>
+		<field name="minimum_planned_date" position="attributes">
+			<attribute name="invisible">True</attribute>
+		</field>
 
-	<field name="origin" position="attributes">
-	<attribute name="invisible">True</attribute>
-	</field>
+		<field name="amount_untaxed" position="attributes">
+			<attribute name="invisible">True</attribute>
+		</field>
 
-        </field>
-	
+		<field name="origin" position="attributes">
+			<attribute name="invisible">True</attribute>
+		</field>
+    </field>
 </record>
 
 <!-- Inherit User Form  View -->
