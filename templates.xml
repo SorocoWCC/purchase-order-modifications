@@ -4,9 +4,12 @@
 		<!-- Adds all assets in Odoo -->
         <template id="assets_backend" name="tickets_dashboard assets" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
+            	<!--Global JS/CSS files -->
+            	<link rel="stylesheet" href="/purchase_order_modifications/static/src/css/global.css"/>
+            	<script type="text/javascript" src="/purchase_order_modifications/static/src/js/igniter.js"></script>
+
         		<!--These links will be called when loading your Odoo -->
                 <link rel="stylesheet" href="/purchase_order_modifications/static/src/css/cssfile.css"/>
-                <script type="text/javascript" src="/purchase_order_modifications/static/src/js/igniter.js"></script>
                 <script type="text/javascript" src="/purchase_order_modifications/static/src/js/javascriptfile.js"></script>
             </xpath>
         </template>
