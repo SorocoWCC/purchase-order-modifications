@@ -1,18 +1,19 @@
 (function() {
     /*=> Tickets Dashboard Module*/
     var igniter = window.SOROCOModel, _model, _view, _controller, body, 
-    calcButton, saveButton, viewCont, formContainer, fullWeightInput, 
-    fullWeightInputVal, emptyWeightInput, emptyWeightInputVal
+    calcButton, saveButton, viewCont, formContainer, formInputsContainer,
+    fullWeightInput, fullWeightInputVal, emptyWeightInput, emptyWeightInputVal
     purchaseOrdersModule = {
         _attachHandlers: function() {
             igniter.moduleContainer.on('click', '.oe_button.oe_form_button_edit', function() {
+                //body.addClass('custom-loading');
                 saveButton = igniter.moduleContainer.find('.oe_button.oe_form_button_save.oe_highlight');
                 calcButton = igniter.moduleContainer.find('.oe_stat_button.btn.btn-default.oe_inline.calculatorButton');
                 calcButton.off('click');
                 calcButton.removeClass('disabled');
                 purchaseOrdersModule._initFormElements();
 
-                calcButton.on('click', function(){
+                calcButton.on('click', function() {
                     purchaseOrdersModule._validatePurchaseOrder();
                 });
             });
@@ -25,10 +26,14 @@
             igniter.moduleContainer.off('viewChange');
             calcButton.off('click');
         },
+        _initGlobalElements: function() {
+           body.append('<div class="custom-modal custom-spinner-loader"></div>');
+        },
         _initFormElements: function() {
             formContainer = igniter.moduleContainer.find('.oe_formview.oe_view');
-            fullWeightInput = formContainer.find('#oe-field-input-4');
-            emptyWeightInput = formContainer.find('#oe-field-input-5');
+            formInputsContainer = formContainer.find('.oe_form_sheet.oe_form_sheet_width > table.oe_form_group tbody td.oe_form_group_cell:first-child table tbody');
+            fullWeightInput = formInputsContainer.find('tr:nth-child(2) td:last-child input');
+            emptyWeightInput = formInputsContainer.find('tr:nth-child(3) td:last-child input');
         },
         _validatePurchaseOrder: function() {
             fullWeightInputVal = fullWeightInput.val().replace(/,/g, "");
@@ -100,6 +105,7 @@
                                 resultElement.val(total);
                                 resultElement.change();
                                 saveButton.click();
+                                calcButton.addClass('disabled');
                             }else{
                                 console.log('Something went wrong...');
                             }                            
@@ -121,8 +127,8 @@
         init: function(model, view, controller) {
             _model = model; _view = view; _controller = controller;
             body = igniter.scope.viewBody;
+            purchaseOrdersModule._initGlobalElements();
             purchaseOrdersModule._attachHandlers();
-            //this._unbindDefaultHandlers();
         }
         /* End Required module functions*/
     };
