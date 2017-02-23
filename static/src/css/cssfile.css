@@ -1,4 +1,5 @@
-.openerp .oe_form .oe_form_sheet.oe_form_sheet_width{
+.openerp .oe_form .oe_form_sheet.oe_form_sheet_width {
+	overflow: hidden;
     max-width: 95%;
 }
 
