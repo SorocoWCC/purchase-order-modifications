@@ -1,12 +1,24 @@
 (function() {
     /*=> Tickets Dashboard Module*/
-    var igniter = window.SOROCOModel, _model, _view, _controller, body, 
+    var igniter = window.SOROCOModel, _model, _view, _controller, body, srcModel,
     calcButton, saveButton, viewCont, formContainer, formInputsContainer,
     fullWeightInput, fullWeightInputVal, emptyWeightInput, emptyWeightInputVal
     purchaseOrdersModule = {
         _attachHandlers: function() {
-            igniter.moduleContainer.on('click', '.oe_button.oe_form_button_edit', function() {
-                //body.addClass('custom-loading');
+            
+            igniter.moduleContainer.on('click', '.oe_button.oe_form_button_edit, .oe_form .oe_view_manager .oe_list_content tbody tr td.oe_form_field_one2many_list_row_add a', function() {
+                srcModel._formElementsInit();
+                console.log(calcButton);
+                calcButton.removeClass('disabled');
+            });
+
+            igniter.moduleContainer.on('click', '.oe_button.oe_form_button.oe_highlight, .oe_button.oe_form_button_save.oe_highlight', function() {
+                calcButton.addClass('disabled');
+            });
+        },
+        _formElementsInit: function(){
+            //body.addClass('custom-loading');
+            if (calcButton === undefined && saveButton === undefined) {
                 saveButton = igniter.moduleContainer.find('.oe_button.oe_form_button_save.oe_highlight');
                 calcButton = igniter.moduleContainer.find('.oe_stat_button.btn.btn-default.oe_inline.calculatorButton');
                 calcButton.off('click');
@@ -16,15 +28,15 @@
                 calcButton.on('click', function() {
                     purchaseOrdersModule._validatePurchaseOrder();
                 });
-            });
-
-            igniter.moduleContainer.on('click', '.oe_button.oe_form_button.oe_highlight, .oe_button.oe_form_button_save.oe_highlight', function() {
-                calcButton.addClass('disabled');
-            });
+            }else{
+                igniter.moduleContainer.off('click.initUI');
+            }        
         },
         _detachHandlers: function() {
             igniter.moduleContainer.off('viewChange');
-            calcButton.off('click');
+            if (calcButton !== undefined) {
+                calcButton.off('click');                
+            }
         },
         _initGlobalElements: function() {
            body.append('<div class="custom-modal custom-spinner-loader"></div>');
@@ -36,27 +48,31 @@
             emptyWeightInput = formInputsContainer.find('tr:nth-child(3) td:last-child input');
         },
         _validatePurchaseOrder: function() {
-            fullWeightInputVal = fullWeightInput.val().replace(/,/g, "");
-            emptyWeightInputVal = emptyWeightInput.val().replace(/,/g, "");
-            if (jQuery.isNumeric(fullWeightInputVal) && fullWeightInputVal > 0) {
-                if (jQuery.isNumeric(emptyWeightInputVal) && emptyWeightInputVal > 0) {
-                    fullWeightInputVal = parseFloat(fullWeightInputVal);
-                    emptyWeightInputVal = parseFloat(emptyWeightInputVal);
-                    if (fullWeightInputVal > emptyWeightInputVal) {
-                        productsRows = formContainer.find('div.oe_list.oe_view.oe_list_editable table.oe_list_content tbody tr[data-id]:not(.oe_form_field_one2many_list_row_add)');
-                        if (productsRows.length > 0) {
-                            purchaseOrdersModule._calculateIron();
-                        }else{
-                            console.log('did\'n find any rows');
-                        }
-                    } else{
-                        console.log('full should be greater than empty');
-                    } 
+            if (fullWeightInputVal !== undefined && emptyWeightInputVal !== undefined) {
+                fullWeightInputVal = fullWeightInput.val().replace(/,/g, "");
+                emptyWeightInputVal = emptyWeightInput.val().replace(/,/g, "");
+                if (jQuery.isNumeric(fullWeightInputVal) && fullWeightInputVal > 0) {
+                    if (jQuery.isNumeric(emptyWeightInputVal) && emptyWeightInputVal > 0) {
+                        fullWeightInputVal = parseFloat(fullWeightInputVal);
+                        emptyWeightInputVal = parseFloat(emptyWeightInputVal);
+                        if (fullWeightInputVal > emptyWeightInputVal) {
+                            productsRows = formContainer.find('div.oe_list.oe_view.oe_list_editable table.oe_list_content tbody tr[data-id]:not(.oe_form_field_one2many_list_row_add)');
+                            if (productsRows.length > 0) {
+                                purchaseOrdersModule._calculateIron();
+                            }else{
+                                console.log('did\'n find any rows');
+                            }
+                        } else{
+                            console.log('full should be greater than empty');
+                        } 
+                    }else{
+                        console.log('emptyWeighNotValid');
+                    }
                 }else{
-                    console.log('emptyWeighNotValid');
-                }
+                    console.log('fullWeighNotValid');
+                }                
             }else{
-                console.log('fullWeighNotValid');
+                console.log('Error while trying to get the car weight fields');
             }
         },
         _calculateIron: function() {
@@ -125,6 +141,7 @@
             purchaseOrdersModule._detachHandlers();
         },
         init: function(model, view, controller) {
+            srcModel = this;
             _model = model; _view = view; _controller = controller;
             body = igniter.scope.viewBody;
             purchaseOrdersModule._initGlobalElements();

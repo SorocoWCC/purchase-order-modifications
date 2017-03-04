@@ -30,5 +30,6 @@ body.custom-loading .custom-modal.custom-spinner-loader {
 }
 
 .openerp .oe_form .oe_form_sheet.oe_form_sheet_width .oe_notebook_page .oe_form_field.oe_form_field_text textarea {
-    margin-top: 10px;
+    min-height: 170px !important;
+    margin-top: 10px;    
 }
