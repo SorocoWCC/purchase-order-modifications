@@ -81,6 +81,18 @@
                     </tr>
                 </table>
             
+            <t t-if="o.peso_lleno > 0 ">
+                <table class="ticket-header">
+                    <tr>
+                      <td>Peso Ingreso: </td>
+                      <td colspan="2"><t t-esc="'{0:,.2f}'.format(int(o.peso_lleno))"/></td>
+                    </tr>
+                    <tr>
+                      <td>Peso Salida: </td>
+                      <td><t t-esc="'{0:,.2f}'.format(int(o.peso_vacio))"/><br/></td>
+                    </tr>
+                </table>
+            </t>
                 <t t-foreach="o.order_line" t-as="i">
                     <table class="product-table">
                         <tr>
@@ -90,7 +102,7 @@
                         <tr>
                             <td>Cantidad: </td>
                             <td><t t-esc="'{0:,.2f}'.format(int(i.product_qty))"/></td>
-                        </tr>
+                        </tr>  
                         <tr>
                             <td>Precio: </td>
                             <td>₡ <t t-esc="'{0:,.2f}'.format(int(i.price_unit))"/> </td>

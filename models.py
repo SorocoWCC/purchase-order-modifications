@@ -10,7 +10,8 @@ class product(models.Model):
     _name = 'product.template'
     _inherit = 'product.template'
     sumar_validacion = fields.Boolean (string='NO sumar en validación:')
-    precio_venta_informe = fields.Float (string = 'Precio de Venta Informe:')   
+    precio_venta_informe = fields.Float (string = 'Precio de Venta Informe:')
+    calcular = fields.Boolean (string='Calcular peso en ordenes de compra:', default=True)   
 
 # ----------------------------  CLASE HEREDADA - PROVEEDOR ------------------------------------
 class product(models.Model):
@@ -34,11 +35,15 @@ class order_line(models.Model):
     _inherit = 'purchase.order.line'
     imagen_lleno = fields.Binary (string="Imagen Lleno")
     imagen_vacio = fields.Binary (string="Imagen Vacio")
+    peso_lleno = fields.Float (string="Peso Lleno")
+    peso_vacio = fields.Float (string="Peso Vacio" )
+    basura = fields.Float (string="Basura" )
+    calcular = fields.Boolean (string="Calcular" )
     order_line_user = fields.Char (compute='_action_order_line_user', store=True, string="Usuario", readonly=True)
 
 # Nombre del cajero
     @api.one
-    @api.depends('product_id')
+    @api.depends('product_id.name', 'peso_vacio')
     def _action_order_line_user(self):
         self.order_line_user = str(self.env.user.name)
 
@@ -91,8 +96,7 @@ class purchase_order(models.Model):
 # Validar la factura (Evaluar pesos y Fotos) "State Confirmed"
     @api.one
     def action_validation(self):
-        peso = float(self.peso_vacio)
-        print "peso vacion inicial -> " + str(peso)
+        peso = float(self.peso_vacio) 
         # Valida si las lineas de factura de los usuarios no limitados tiene fotos adjuntas 
         for order_line in self.order_line:
             res_user = self.env['res.users'].search([('name', '=', str(order_line.order_line_user))])
@@ -231,6 +235,41 @@ class purchase_order(models.Model):
         if str(self.pago) == "caja_chica" :
             if str(cajero_cierre_caja_chica.cajero) == str(self.env.user.name) :
                 raise Warning ("Usuario no autorizado para crear facturas")
+
+# Calcular la cantidad del producto a facturar
+    @api.one
+    def action_calcular_peso(self):
+
+        # Validaciones peso lleno y vacio
+        if self.peso_lleno < 1 or self.peso_vacio < 1 :
+            raise Warning ("Error: Ingrese los pesos lleno y vacio.")
+        if self.peso_vacio > self.peso_lleno:
+            raise Warning ("Error: El peso vacio no puede ser mayor al lleno")
+
+        # Validar que solamente 1 producto tenga el check de calcular / Validar los productos sobre los cuales no se puede realizar calculo
+        productos_marcados = 0
+        for i in self.order_line :
+            if i.product_id.calcular == False and i.calcular == True :
+                raise Warning ("Error: Este producto no es valido para realizar el cálculo")
+            if i.calcular == True:
+                productos_marcados += 1
+        if productos_marcados > 1 :
+            raise Warning ("Error: Solamente 1 producto puede ser calculado")
+        if productos_marcados == 0 :
+            raise Warning ("Error: Seleccione 1 producto para calcular")
+
+        # Calculo de la cantidad de producto a facturar
+        descontar = 0
+        cantidad_facturable = self.peso_lleno - self.peso_vacio
+        for i in self.order_line:
+            # Productos que no se deben descontar: Mantenimiento, rebajo, prestamo
+            if i.product_id.name != "Mantenimiento" and i.product_id.name != "Rebajo" and i.product_id.name != "Prestamo" and i.calcular == False:
+                descontar += i.product_qty
+
+        # Asigna la cantidad de material a facturar en la linea de compra
+        for i in self.order_line:
+            if i.calcular == True :
+                i.product_qty = cantidad_facturable - descontar
 
 
 # ----------------------------AGREGAR LINEAS DE PRODUCTO ------------------------------------

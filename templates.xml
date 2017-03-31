@@ -84,8 +84,9 @@
 	                            <field name="order_line" attrs="{'readonly': ['|', ('state','!=', 'draft')]}">
                                 	<tree string="Purchase Order Lines" editable="bottom">
                                     <field name="product_id" on_change="onchange_product_id(parent.pricelist_id,product_id,0,False,parent.partner_id, parent.date_order,parent.fiscal_position,date_planned,False,False,parent.state,context)"/>
-      				    <field  name="imagen_lleno" widget='image' height="65" weight="65" />
-      				    <field  name="imagen_vacio" widget='image' height="65" weight="65" />
+                                    <field  name="calcular" />
+      				    			<field  name="imagen_lleno" widget='image' height="80" weight="80" />
+      				    			<field  name="imagen_vacio" widget='image' height="80" weight="80" />
                                     <field name="name"/>
                                     <field name="product_qty" on_change="onchange_product_id(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id,parent.date_order,parent.fiscal_position,date_planned,name,False,parent.state,context)"/>
                                     <field name="price_unit"/>
@@ -154,7 +155,10 @@
 --> 
 <!-- Boton para tomar fotos --> 
 	<button name="view_picking" position="before">
-	<button name="action_take_picture" type="object" class="oe_inline oe_stat_button" icon="fa-camera" string="Tomar Fotos "/>
+<!-- Boton para calcular Peso --> 
+	<button name="action_take_picture" type="object" class="oe_inline oe_stat_button" icon="fa-camera" string="Tomar Fotos"/>
+<!-- Boton para calcular Peso -->
+	<button name="action_calcular_peso" type="object" class="oe_inline oe_stat_button" icon="fa-calculator" string="Calcular" attrs="{'invisible': [ '|',  ('state','!=', 'draft'),('pago_caja','=', 'pagado')]}"/>
         </button>
 
 <!-- Mostar Prestamo --> 
@@ -233,7 +237,7 @@
         </field>
 
  	<field name="date_order" position="after">
-      	<field  name="fecha_pago" />
+      	<field  name="fecha_pago"/>
         </field>
 
     <field name="fecha_pago" position="after">
@@ -286,6 +290,7 @@
 			<group>
 				<field  name="sumar_validacion" />
 				<field  name="precio_venta_informe" />
+				<field  name="calcular" />
 			</group>				   
 		</page>
 	</notebook>
