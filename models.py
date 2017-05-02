@@ -64,10 +64,12 @@ class purchase_order(models.Model):
     periodo = fields.Char(string="Periodo")
     peso_lleno = fields.Float(string="Peso Lleno")
     peso_vacio = fields.Float(string="Peso Vacio")
+    peso_neto = fields.Float( string="Peso Neto")
+    placa = fields.Char (string="Placa")
     pago = fields.Selection ([('regular','Regular'), ('muy','***MUY PAGA***'), ('caja_chica','Caja Chica')], string='Metodo de Pago', required=True)
     pago_caja = fields.Selection ([('pendiente','Pendiente'),('pagado','Pagado')], string='Pago', default="pendiente", readonly=True)
     informacion = fields.Char(compute='_update_info', store=True, string="Avisos")
-    prestamo_info = fields.Char(compute='_action_allowance', store=True, string="Avisos")
+    prestamo_info = fields.Char(compute='_action_allowance', store=True, default=0, string="Prestamo" )
     mantenimiento_info = fields.Char(compute='_action_allowance', store=True, string="Avisos")
     purchase_info_validation = fields.Char(compute='_action_purchase_creation', store=True, string="validacion")
     _defaults = { 
@@ -96,6 +98,25 @@ class purchase_order(models.Model):
 # Validar la factura (Evaluar pesos y Fotos) "State Confirmed"
     @api.one
     def action_validation(self):
+        # Validacion de la cantidad de material facturado
+        cantidad_facturable = 0
+               
+        if self.peso_neto > 0 :       
+            for i in self.order_line :
+                if i.product_id.calcular == True:
+                    cantidad_facturable = i.product_qty
+
+        if cantidad_facturable > self.peso_neto:
+            raise Warning ("Error: La cantidad de material facturado es mayor que el peso neto.")
+
+        # Valida que el abono al prestamo se pueda realizar
+        res= self.env['cliente.allowance'].search([('name', '=', str(self.partner_id.name)), ('state', '=', 'new')])
+        print str(res[0])
+        for line in self.order_line:
+            if line.product_id.name == "Prestamo" and len(res) > 0:
+                if -(line.price_subtotal) > res[0].saldo:
+                    raise Warning ("Error: El monto del abono es mayor al saldo del prestamo.")
+
         peso = float(self.peso_vacio) 
         # Valida si las lineas de factura de los usuarios no limitados tiene fotos adjuntas 
         for order_line in self.order_line:
@@ -127,66 +148,75 @@ class purchase_order(models.Model):
         cierre_regular = self.env['cierre'].search([('state', '=', 'new'), ('tipo', '=', 'regular')])
         cierre_caja_chica = self.env['cierre'].search([('state', '=', 'new'), ('tipo', '=', 'caja_chica')])
 
-        # Valida si el usuario que creo la orden de compra es igual al cajero
-        if str(self.env.user.name) == str(self.validator.name) :
-            raise Warning ("Error: El usuario que valida el pedido de compra es igual al cajero")
-
-        # Valida si hay cierres de caja disponibles para asociarlos
-        if cierre_regular.id == False :
-            raise Warning ("Error: Proceda a crear un cierre de caja tipo Regular.")
-        if str(self.pago) == "caja_chica":
-            if cierre_caja_chica.id == False:
-                raise Warning ("Error: Proceda a crear un cierre de caja tipo Caja Chica.")     
-
-        # Valida si el pago se puede realizar
-        if str(self.pago) == "caja_chica" :
-
-            if str(cajero_cierre_caja_chica.cajero) == str(self.env.user.name) :
-                self.cajero_id = str(self.env.user.name)
-                self.fecha_pago = fields.Datetime.now()
-                self.pago_caja = 'pagado'
-                self.cierre_id = cajero_cierre_regular.id
-                self.cierre_id_caja_chica = cajero_cierre_caja_chica.id
-            else:
-                raise Warning ("Usuario no autorizado para pagar facturas") 
-
-        elif str(self.pago) == "regular" :
-
-                # Valida si el usuario que creo la orden de compra es igual al cajero
-            if str(self.env.user.name) == str(self.validator.name) :
-                raise Warning ("Error: El usuario que valida el pedido de compra es igual al cajero")
-            
-            # verifica que se adjunte la imagen
-            if str(self.imagen_pago) == "None":
-                raise Warning ("Por Favor adjunte la imagen de pago.")
-
-            if str(cajero_cierre_regular.cajero) == str(self.env.user.name) :
-                self.cajero_id = str(self.env.user.name)
-                self.fecha_pago = fields.Datetime.now()
-                self.pago_caja = 'pagado'
-                self.cierre_id = cajero_cierre_regular.id
-                self.cierre_id_caja_regular = cajero_cierre_regular.id
-            else:
-                raise Warning ("Usuario no autorizado para pagar facturas")
-
-        # Cualquier usuario puede pagar las ***muy paga *** 
-        elif str(self.pago) == "muy" :
+        # El usuario administrador puede pagar todas las facturas
+        if str(self.env.user.name) == "Administrator" :
             self.cajero_id = str(self.env.user.name)
             self.fecha_pago = fields.Datetime.now()
             self.pago_caja = 'pagado'
             self.cierre_id = cajero_cierre_regular.id
-        
+            self.cierre_id_caja_chica = cajero_cierre_caja_chica.id
         else:
-            raise Warning ("Usuario no autorizado para pagar facturas") 
-                
-        if str(self.informacion) == "Listo Para Revisar | ***MUY PAGA***":
-            self.informacion = "***MUY PAGA***"
+            # Valida si el usuario que creo la orden de compra es igual al cajero
+            if str(self.env.user.name) == str(self.validator.name) :
+                raise Warning ("Error: El usuario que valida el pedido de compra es igual al cajero")
 
-    #       Crear directament un Abono al prestamo
-        res= self.env['cliente.allowance'].search([('res_partner_id', '=', str(self.partner_id.name))])
-        for line in self.order_line:
-            if line.name == "Prestamo" and len(res) > 0:
-                res.abono_ids.create({'name':str(res.name),'libro_id':res.id, 'monto':-(line.price_subtotal), 'notas': str(self.name)})
+            # Valida si hay cierres de caja disponibles para asociarlos
+            if cierre_regular.id == False :
+                raise Warning ("Error: Proceda a crear un cierre de caja tipo Regular.")
+            if str(self.pago) == "caja_chica":
+                if cierre_caja_chica.id == False:
+                    raise Warning ("Error: Proceda a crear un cierre de caja tipo Caja Chica.")     
+
+            # Valida si el pago se puede realizar
+            if str(self.pago) == "caja_chica" :
+
+                if str(cajero_cierre_caja_chica.cajero) == str(self.env.user.name) :
+                    self.cajero_id = str(self.env.user.name)
+                    self.fecha_pago = fields.Datetime.now()
+                    self.pago_caja = 'pagado'
+                    self.cierre_id = cajero_cierre_regular.id
+                    self.cierre_id_caja_chica = cajero_cierre_caja_chica.id
+                else:
+                    raise Warning ("Usuario no autorizado para pagar facturas") 
+
+            elif str(self.pago) == "regular" :
+
+                    # Valida si el usuario que creo la orden de compra es igual al cajero
+                if str(self.env.user.name) == str(self.validator.name) :
+                    raise Warning ("Error: El usuario que valida el pedido de compra es igual al cajero")
+                
+                # verifica que se adjunte la imagen
+                if str(self.imagen_pago) == "None":
+                    raise Warning ("Por Favor adjunte la imagen de pago.")
+
+                if str(cajero_cierre_regular.cajero) == str(self.env.user.name) :
+                    self.cajero_id = str(self.env.user.name)
+                    self.fecha_pago = fields.Datetime.now()
+                    self.pago_caja = 'pagado'
+                    self.cierre_id = cajero_cierre_regular.id
+                    self.cierre_id_caja_regular = cajero_cierre_regular.id
+                else:
+                    raise Warning ("Usuario no autorizado para pagar facturas")
+
+            # Cualquier usuario puede pagar las ***muy paga *** 
+            elif str(self.pago) == "muy" :
+                self.cajero_id = str(self.env.user.name)
+                self.fecha_pago = fields.Datetime.now()
+                self.pago_caja = 'pagado'
+                self.cierre_id = cajero_cierre_regular.id
+            
+            else:
+                raise Warning ("Usuario no autorizado para pagar facturas") 
+                    
+            if str(self.informacion) == "Listo Para Revisar | ***MUY PAGA***":
+                self.informacion = "***MUY PAGA***"
+
+            # Crear directament un Abono al prestamo
+            res= self.env['cliente.allowance'].search([('name', '=', str(self.partner_id.name)), ('state', '=', 'new')])
+            print str(res)
+            for line in self.order_line:
+                if line.product_id.name == "Prestamo" and len(res) > 0:
+                    res[0].abono_ids.create({'name':str(res[0].name),'libro_id':res[0].id, 'monto':-(line.price_subtotal), 'notas': str(self.name)})
 
 # Transferir la factura
     @api.one
@@ -214,13 +244,14 @@ class purchase_order(models.Model):
         # Asigna las notas del proveedor y las trae a la order de compra
         self.notes = self.partner_id.comment
         # Verifica si se debe realizar un abono al prestamo
-        res= self.env['cliente.allowance'].search([('name', '=', str(self.partner_id.name))])
+        res= self.env['cliente.allowance'].search([('name', '=', str(self.partner_id.name)), ('state', '=', 'new')])
         if len(res) > 0:
-            self.prestamo_info="Prestamo"  
+            self.prestamo_info = res[0].saldo
+        else:
+            self.prestamo_info = 0
         # Verifica si se debe rebajar Mantenimiento    
         if self.partner_id.rebajar_mantenimiento == True:
             self.mantenimiento_info = "Mantenimiento" 
-            print "*************" + str(self.mantenimiento_info)
 
 #  Validar si el usuario puede crear facturas  
     @api.one
@@ -271,6 +302,11 @@ class purchase_order(models.Model):
             if i.calcular == True :
                 i.product_qty = cantidad_facturable - descontar
 
+# Calcular el peso neto
+    @api.onchange('peso_lleno', 'peso_vacio', 'peso_neto')
+    def _action_peso_neto(self):
+      if self.peso_lleno > 0 and self.peso_vacio > 0:
+        self.peso_neto = self.peso_lleno - self.peso_vacio
 
 # ----------------------------AGREGAR LINEAS DE PRODUCTO ------------------------------------
 # Agregar linea Pedido Aluminio

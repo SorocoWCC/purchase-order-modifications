@@ -1,12 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-  <data>
-    <template id="report_tiquete_compra_document">
-        <t t-foreach="docs" t-as="o">
-            <div class="page"> 
-                <style type="text/css">
-
-                    h4 {
+    <data>
+        <template id="report_tiquete_compra_document">
+            <t t-foreach="docs" t-as="o">
+                <div class="page">
+                    <style type="text/css">h4 {
                         font-weight:bold;
                     }
 
@@ -51,79 +49,155 @@
 
                     .ticket-container .ticket-body .ticket-footer h4 {
                         font-weight: bold;
-                    }
-                </style>
+                    }</style>
+                    <div class="row">
+                        <div class="container ticket-container">
+                            <div class="ticket-heading text-center">
+                                <h4 style="font-weight:bold;">Recicladora San Miguel</h4>
+                                <h5>Teléfono: 2275-1833</h5>
+                                <h6>Sitio web:</h6>
+                                <h5>www.recicladorasanmiguel.com</h5>
+                            </div>
+                            <div class="ticket-body">
+                                <table class="ticket-header">
+                                    <tr>
+                                        <th class="text-center" colspan="2">Factura de compra</th>
+                                    </tr>
+                                    <tr>
+                                        <td>Factura:</td>
+                                        <td colspan="2">
+                                            <t t-esc="o.name" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Fecha:</td>
+                                        <td>
+                                            <span class="oe_editable" t-field="o.date_order" />
+                                            <br />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cliente:</td>
+                                        <td>
+                                            <t t-esc="o.partner_id.name" />
+                                        </td>
+                                    </tr>
+                                </table>
+                                <t t-if="o.peso_lleno &gt; 0 ">
+                                    <table class="ticket-header">
+                                        <tr>
+                                            <td>Peso Ingreso:</td>
+                                            <td colspan="2">
+                                                <t t-esc="'{0:,.2f}'.format(int(o.peso_lleno))" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Peso Salida:</td>
+                                            <td>
+                                                <t t-esc="'{0:,.2f}'.format(int(o.peso_vacio))" />
+                                                <br />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </t>
+                                <t t-foreach="o.order_line" t-as="i">
+                                    <table class="product-table">
+                                        <tr>
+                                            <td>Producto:</td>
+                                            <td>
+                                                <t t-esc="i.name" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Cantidad:</td>
+                                            <td>
+                                                <t t-esc="'{0:,.2f}'.format(int(i.product_qty))" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Precio:</td>
+                                            <td>
+                                                ₡
+                                                <t t-esc="'{0:,.2f}'.format(int(i.price_unit))" />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Subtotal:</td>
+                                            <td>
+                                                ₡
+                                                <t t-esc="'{0:,.2f}'.format(int(i.price_subtotal))" />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </t>
+                                <div class="ticket-footer text-center">
+                                    <h4>
+                                        Total: ₡
+                                        <t t-esc="'{0:,.2f}'.format(int(o.amount_total))" />
+                                    </h4>
+                                    <h6>Gracias por preferirnos</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="row">
-        <div class="container ticket-container">
-            <div class="ticket-heading text-center">
-                <h4 style="font-weight:bold;">Recicladora San Miguel</h4>
-                <h5>Teléfono: 2275-1833</h5>
-                <h6>Sitio web:</h6>    
-                <h5>www.recicladorasanmiguel.com</h5>
-            </div>
-            <div class="ticket-body">
-                <table class="ticket-header">
-                    <tr>
-                    <th class="text-center" colspan="2">Factura de compra</th>
-                    </tr>
-                    <tr>
-                      <td>Factura: </td>
-                      <td colspan="2"><t t-esc="o.name"/></td>
-                    </tr>
-                    <tr>
-                      <td>Fecha: </td>
-                      <td><span class="oe_editable" t-field="o.date_order"/><br/></td>
-                    </tr>
-                    <tr>
-                      <td>Cliente: </td>
-                      <td><t t-esc="o.partner_id.name"/></td>
-                    </tr>
-                </table>
-            
-            <t t-if="o.peso_lleno > 0 ">
-                <table class="ticket-header">
-                    <tr>
-                      <td>Peso Ingreso: </td>
-                      <td colspan="2"><t t-esc="'{0:,.2f}'.format(int(o.peso_lleno))"/></td>
-                    </tr>
-                    <tr>
-                      <td>Peso Salida: </td>
-                      <td><t t-esc="'{0:,.2f}'.format(int(o.peso_vacio))"/><br/></td>
-                    </tr>
-                </table>
+           <p style="page-break-after:always;">   </p>
+           <t t-foreach="o.order_line" t-as="i">
+
+            <t t-if="i.name == '[PRE] Prestamo' and o.pago_caja == 'pagado'">  
+
+          <div class="row">
+            <div class="container ticket-container">
+              <div class="ticket-heading text-center">
+                  <h4 style="font-weight:bold;">Recicladora San Miguel</h4>
+                  <h5>Teléfono: 2275-1833</h5>
+                  <h6>Sitio web:</h6>    
+                  <h5>www.recicladorasanmiguel.com</h5>
+              </div>
+              <div class="ticket-body">
+                  <table class="ticket-header">
+                      <tr>
+                        <th class="text-center" colspan="2">Recibo de Dinero</th>
+                      </tr>
+                      <tr>
+                        <td>Fecha: </td>
+                        <td><span class="oe_editable" t-field="o.date_order"/><br/></td>
+                      </tr>
+                      <tr>
+                        <td>Recibimos de: </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2"><t t-esc="o.partner_id.name" /></td>
+                      </tr>
+                      <tr>
+                        <td>La suma de:</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2"> ₡ <t t-esc="'{0:,.2f}'.format(-int(i.price_unit))" /> </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">Por concepto de: </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2"> Abono al préstamo</td>
+                      </tr>    
+                  </table>
+              
+                  <div class="ticket-footer text-center">
+                      <h4>Saldo: ₡  <t t-esc="float(o.prestamo_info) + i.price_unit" /></h4>
+                  </div>
+                  <div style="height: 50px; "> </div>
+                  <div style="text-align:center">
+                      ________________ <br/>
+                      Firma Cliente <br/>
+                  </div>
+              </div>
+          </div>
+          </div>
             </t>
-                <t t-foreach="o.order_line" t-as="i">
-                    <table class="product-table">
-                        <tr>
-                            <td>Producto: </td>
-                            <td> <t t-esc="i.name"/> </td>
-                        </tr>
-                        <tr>
-                            <td>Cantidad: </td>
-                            <td><t t-esc="'{0:,.2f}'.format(int(i.product_qty))"/></td>
-                        </tr>  
-                        <tr>
-                            <td>Precio: </td>
-                            <td>₡ <t t-esc="'{0:,.2f}'.format(int(i.price_unit))"/> </td>
-                        </tr>
-                        <tr>
-                            <td>Subtotal: </td>
-                            <td>₡ <t t-esc="'{0:,.2f}'.format(int(i.price_subtotal))"/></td>
-                        </tr>
-                    </table>
-                </t>    
-        
-                <div class="ticket-footer text-center">
-                    <h4>Total: ₡ <t t-esc="'{0:,.2f}'.format(int(o.amount_total))"/> </h4>
-                    <h6>Gracias por preferirnos</h6>
+          </t>
                 </div>
-            </div>
-        </div>
-            </div>
-            </div>
-        </t>
-    </template>
-  </data>
+            </t>
+        </template>
+    </data>
 </openerp>
-
