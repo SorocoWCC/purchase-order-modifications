@@ -9,7 +9,7 @@
                 <script type="text/javascript" src="/purchase_order_modifications/static/src/js/igniter.js"></script>
                 <!--These links will be called when loading your Odoo -->
                 <link rel="stylesheet" href="/purchase_order_modifications/static/src/css/cssfile.css" />
-                <script type="text/javascript" src="/purchase_order_modifications/static/src/js/javascriptfile.js"></script>
+                <!-- <script type="text/javascript" src="/purchase_order_modifications/static/src/js/javascriptfile.js"></script> -->
             </xpath>
         </template>
 <!-- Inherit Purchase Order Form View -->

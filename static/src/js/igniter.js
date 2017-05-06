@@ -62,13 +62,12 @@
             console.log('[MODULE] Looking for custom module files');
             var counter = 1,
             markupWatcher = window.setInterval(function() {
-
+                console.log('DEBUG => Module instances loaded'+srcModel._modulesInstances.lengthw);
                 if (srcModel._modulesInstances.length > 0) {
                     var moduleCont = jQuery('.oe_application .oe_view_manager.oe_view_manager_current');
                     
                     jQuery.each(srcModel._modulesInstances, function(index, module) {
                         var moduleCustomCont = jQuery(module.container);
-
                         if (moduleCont.length > 0 && moduleCustomCont.length > 0) {
                             srcModel.moduleContainer = moduleCont;
                             srcModel.scope.customModuleSelector = moduleCustomCont;
@@ -85,7 +84,7 @@
                             window.clearInterval(markupWatcher);
                         }
                     });
-                    if (counter >= 4) {
+                    if (counter >= 5) {
                         console.log('[MODULE] No custom files found for this module');
                         window.clearInterval(markupWatcher);
                     }
@@ -161,6 +160,7 @@
         }
         /*End Public access properties*/
     };
+    console.log('test');
     window.SOROCOModel.init();
     /*=== Ends Global JS Handler // DO NOT TOUCH===*/
 })(window);
