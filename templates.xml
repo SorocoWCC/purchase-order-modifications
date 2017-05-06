@@ -90,8 +90,8 @@
                                 	<tree string="Purchase Order Lines" editable="bottom">
                                     <field name="product_id" on_change="onchange_product_id(parent.pricelist_id,product_id,0,False,parent.partner_id, parent.date_order,parent.fiscal_position,date_planned,False,False,parent.state,context)"/>
                                     <field  name="calcular" />
-      				    			<field  name="imagen_lleno" widget='image' height="120" weight="120" />
-      				    			<field  name="imagen_vacio" widget='image' height="120" weight="120" />
+      				    			<field  name="imagen_lleno" widget='image' height="80" weight="80" />
+      				    			<field  name="imagen_vacio" widget='image' height="80" weight="80" />
                                     <field name="name"/>
                                     <field name="product_qty" on_change="onchange_product_id(parent.pricelist_id,product_id,product_qty,product_uom,parent.partner_id,parent.date_order,parent.fiscal_position,date_planned,name,False,parent.state,context)"/>
                                     <field name="price_unit"/>
