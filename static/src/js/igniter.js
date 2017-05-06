@@ -62,7 +62,6 @@
             console.log('[MODULE] Looking for custom module files');
             var counter = 1,
             markupWatcher = window.setInterval(function() {
-                console.log('DEBUG => Module instances loaded'+srcModel._modulesInstances.lengthw);
                 if (srcModel._modulesInstances.length > 0) {
                     var moduleCont = jQuery('.oe_application .oe_view_manager.oe_view_manager_current');
                     
@@ -160,7 +159,6 @@
         }
         /*End Public access properties*/
     };
-    console.log('test');
     window.SOROCOModel.init();
     /*=== Ends Global JS Handler // DO NOT TOUCH===*/
 })(window);
