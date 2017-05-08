@@ -111,7 +111,7 @@ class purchase_order(models.Model):
 
         # Valida que el abono al prestamo se pueda realizar
         res= self.env['cliente.allowance'].search([('name', '=', str(self.partner_id.name)), ('state', '=', 'new')])
-        print str(res[0])
+
         for line in self.order_line:
             if line.product_id.name == "Prestamo" and len(res) > 0:
                 if -(line.price_subtotal) > res[0].saldo:
