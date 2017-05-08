@@ -3,9 +3,17 @@
     /*=== STARTS Global JS Handler // DO NOT TOUCH===*/
     var body, srcModel, viewWatcher, markupWatcher;
     window.SOROCOModel = {
-        _modulesInstances: [], _odooM: {}, activeModuleInstance: {}, 
+        _modulesInstances: [], _odooM: {}, activeModuleInstance: {}, _debugState : false,
+        _debugMsg : function(msg) {
+            var that = this;
+
+            if (that._debugState) {
+                console.log('=> Debug:' + msg);
+            }
+        },
         _attachHandlers: function() {
-            console.log('[Module] Attaching Module Handlers');
+            var that = this;
+            that._debugMsg('[Module] Attaching Module Handlers');
             jQuery(document).ready(function() {
                 body = jQuery('body');
                 openerp.web.WebClient.include({
@@ -17,12 +25,12 @@
                 });
 
                 jQuery('nav ul li a.oe_menu_toggler, ul#menu_more li a').on('click', function(){
-                    console.log('[Module] Module Changed');
+                    that._debugMsg('[Module] Module Changed');
                     srcModel._initModulesRefresh();
                 });
 
                 body.on('click','.oe_webclient .oe_leftbar .oe_secondary_menu .oe_secondary_submenu a', function(){
-                    console.log('[Module] Sub-module Changed');
+                    that._debugMsg('[Module] Sub-module Changed');
                     if(!srcModel.activeModuleInstance.avoidSubModuleRefresh){
                         srcModel._initModulesRefresh();
                     }
@@ -30,9 +38,10 @@
             });
         },
         _modelWatcher: function(scope) {
-            var counter = 1;
+            var that = this,
+                counter = 1;
 
-            console.log('[MODEL] Model Lookup started');
+            that._debugMsg('[MODEL] Model Lookup started');
             modelWatcher = window.setInterval(function() {
                 var view, controller;
 
@@ -45,12 +54,12 @@
                         srcModel.scope.viewBody = body;
                         srcModel.scope.controller = scope.action_manager.inner_widget.views[view].controller;
                         srcModel.scope.controllerId = srcModel.scope.controller.model;
-                    console.log('[MODEL] Model Found');
+                    that._debugMsg('[MODEL] Model Found');
                     srcModel._markupWatcher();
                     window.clearInterval(modelWatcher);
                 }else if (counter >= 10) {
                     window.clearInterval(modelWatcher);
-                    console.log('[Model] Model Lookup finished');
+                    that._debugMsg('[Model] Model Lookup finished');
                     if (markupWatcher) {
                         window.clearInterval(markupWatcher);
                     }
@@ -59,8 +68,10 @@
             }, 2000);
         },
         _markupWatcher: function() {
-            console.log('[MODULE] Looking for custom module files');
-            var counter = 1,
+            this._debugMsg('[MODULE] Looking for custom module files');
+
+            var that = this,
+            counter = 1,
             markupWatcher = window.setInterval(function() {
                 if (srcModel._modulesInstances.length > 0) {
                     var moduleCont = jQuery('.oe_application .oe_view_manager.oe_view_manager_current');
@@ -70,33 +81,34 @@
                         if (moduleCont.length > 0 && moduleCustomCont.length > 0) {
                             srcModel.moduleContainer = moduleCont;
                             srcModel.scope.customModuleSelector = moduleCustomCont;
-                            console.log('[MODULE] Custom Module Found');
-                            console.log('[MODULE] initializing: '+ srcModel.scope.controllerId);
+                            that._debugMsg('[MODULE] Custom Module Found');
+                            that._debugMsg('[MODULE] initializing: '+ srcModel.scope.controllerId);
                             srcModel.activeModuleInstance = module;
                             module.inited = true;
                             if (module.viewWatcher) {
-                                console.log('[MODULE] View Watcher Requested');
+                                that._debugMsg('[MODULE] View Watcher Requested');
                                 srcModel._viewWatcher(true);
                             }
                             module.instance.init(srcModel.scope, srcModel.scope.view, srcModel.scope.controller);
-                            console.log('[MODULE] Custom Module initialized');
+                            that._debugMsg('[MODULE] Custom Module initialized');
                             window.clearInterval(markupWatcher);
                         }
                     });
                     if (counter >= 5) {
-                        console.log('[MODULE] No custom files found for this module');
+                        that._debugMsg('[MODULE] No custom files found for this module');
                         window.clearInterval(markupWatcher);
                     }
                     counter ++;
                 }else{
-                    console.log('[MODULE] There are no custom modules on the queue');
+                    that._debugMsg('[MODULE] There are no custom modules on the queue');
                     window.clearInterval(markupWatcher);
                 }
             }, 1500);
         },
         _viewWatcher: function(activate) {
+            var that = this;
             if (activate) {
-                console.log('[TIMER] Starting view watcher');
+                that._debugMsg('[TIMER] Starting view watcher');
                 viewWatcher = window.setInterval(function() {
                     if (srcModel.moduleContainer.attr('data-view-type') !== srcModel.currentView) {
                         srcModel.currentView = srcModel.moduleContainer.attr('data-view-type');
@@ -105,18 +117,19 @@
                 }, 1500);
             }else{
                 if (viewWatcher) {
-                    console.log('[TIMER] stopping viewWatcher');
+                    that._debugMsg('[TIMER] stopping viewWatcher');
                     window.clearInterval(viewWatcher);
                 }
             }
         },
         _initModulesRefresh: function() {
-            var found = false;
-            console.log('[MODULE] Looking for current instantiate module');
+            var that = this,
+                found = false;
+            that._debugMsg('[MODULE] Looking for current instantiate module');
 
             jQuery.each(srcModel._modulesInstances, function(index, module) {
                 if (module.inited) {
-                    console.log('[MODULE] Current Module found');
+                    that._debugMsg('[MODULE] Current Module found');
                     found = true;
                     module.instance.suspend();
                     srcModel.activeModuleInstance = {};
@@ -128,10 +141,10 @@
             srcModel._modelWatcher(srcModel._odooM);
 
             if (found) {
-                console.log('[MODULE] Instance down');
+                that._debugMsg('[MODULE] Instance down');
                 return true;
             } else {
-                console.log('[MODULE] Unable to found a module instance running');
+                that._debugMsg('[MODULE] Unable to found a module instance running');
                 return false;
             }
         },
