@@ -104,7 +104,7 @@ class purchase_order(models.Model):
         if self.peso_neto > 0 :       
             for i in self.order_line :
                 if i.product_id.calcular == True:
-                    cantidad_facturable = i.product_qty
+                    cantidad_facturable += i.product_qty
 
         if cantidad_facturable > self.peso_neto:
             raise Warning ("Error: La cantidad de material facturado es mayor que el peso neto.")
@@ -141,6 +141,10 @@ class purchase_order(models.Model):
 # Marcar la factura como pagada y la asocia con los cierres de caja
     @api.one
     def action_quotation_paid(self):
+
+        # Valida si la factura fue cancelada antes de pagarla
+        if str(self.state) == "cancel" :
+            raise Warning ("Error: La factura fue cancelada")
 
         cajero_cierre_regular = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new'), ('tipo', '=', 'regular')])
         cajero_cierre_caja_chica = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new'), ('tipo', '=', 'caja_chica')])
