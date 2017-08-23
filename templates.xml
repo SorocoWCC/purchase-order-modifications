@@ -29,6 +29,7 @@
 
 	<field name="date_order" position="before">
 		<field  name="placa" attrs="{'readonly': ['|', ('state','!=', 'draft')]}"/>
+		<field  name="placa_vehiculo" attrs="{'readonly': ['|', ('state','!=', 'draft')]}"/>
     </field>
 
 	<field name="partner_id" position="after">
@@ -261,6 +262,7 @@
 
     <field name="date_order" position="after">
      <field  name="placa" />
+     <field  name="placa_vehiculo" />
      </field>
 
 	<field name="minimum_planned_date" position="attributes">
