@@ -11,6 +11,14 @@
             file="Tiquete Compra" 
         />
 
+        <report 
+            string="Factura de Compra (Fotos)" 
+            id="custom_report_factura_de_compra_fotos" 
+            model="purchase.order" 
+            report_type="qweb-pdf"
+            name="purchase_order_modifications.report_factura_de_compra_fotos_document" 
+            file="Factura de Compra Fotos" 
+        />
         <record id="paperformat_lowmargin" model="report.paperformat">
             <field name="name">Punto de Venta</field>
             <field name="default" eval="True" />

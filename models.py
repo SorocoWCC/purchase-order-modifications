@@ -309,6 +309,8 @@ class purchase_order(models.Model):
 # Calcular el peso neto
     @api.onchange('peso_lleno', 'peso_vacio', 'peso_neto')
     def _action_peso_neto(self):
+      #command= "TIME=`TZ=GMT+6 date +%D-%T`; fswebcam -d /dev/video0 -r 1280x720 --font Arial:30 --no-timestamp  --title \"$TIME\" --save /pictures/.pictures/picture1-" + str(self.name) + ";fswebcam -d /dev/video1 -r 1280x720 --no-timestamp --save /pictures/.pictures/picture2-" + str(self.name) + ";montage -geometry 400 /pictures/.pictures/picture1-" + str(self.name) + " /pictures/.pictures/picture2-" + str(self.name) + " /pictures/" + str(self.name) + ".jpg ; rm /pictures/.pictures/*"  
+      #subprocess.call(str(command), shell=True)
       if self.peso_lleno > 0 and self.peso_vacio > 0:
         self.peso_neto = self.peso_lleno - self.peso_vacio
 

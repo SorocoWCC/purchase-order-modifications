@@ -27,6 +27,7 @@
         'templates.xml',
         'purchase_order_modifications_report.xml',       
         'views/report_tiquete_compra.xml',
+        'views/report_factura_de_compra_fotos.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
