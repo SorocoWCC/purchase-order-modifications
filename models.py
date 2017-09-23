@@ -5,6 +5,12 @@ import subprocess
 import time
 from openerp.exceptions import Warning
 
+
+class impresora(models.Model):
+    _name = 'impresora'
+    name = fields.Char(string= 'Impresora')
+    state = fields.Selection ([('on', 'ON'), ('off','OFF') ], string='Estado', default='off')
+
 # ----------------------------  CLASE HEREDADA - PRODUCTO ------------------------------------
 class product(models.Model):
     _name = 'product.template'
@@ -275,7 +281,7 @@ class purchase_order(models.Model):
 # Calcular la cantidad del producto a facturar
     @api.one
     def action_calcular_peso(self):
-
+        
         # Validaciones peso lleno y vacio
         if self.peso_lleno < 1 or self.peso_vacio < 1 :
             raise Warning ("Error: Ingrese los pesos lleno y vacio.")
@@ -308,12 +314,20 @@ class purchase_order(models.Model):
                 i.product_qty = cantidad_facturable - descontar
 
 # Calcular el peso neto
-    @api.onchange('peso_lleno', 'peso_vacio', 'peso_neto')
+    @api.onchange('peso_lleno', 'peso_vacio')
     def _action_peso_neto(self):
-      #command= "TIME=`TZ=GMT+6 date +%D-%T`; fswebcam -d /dev/video0 -r 1280x720 --font Arial:30 --no-timestamp  --title \"$TIME\" --save /pictures/.pictures/picture1-" + str(self.name) + ";fswebcam -d /dev/video1 -r 1280x720 --no-timestamp --save /pictures/.pictures/picture2-" + str(self.name) + ";montage -geometry 400 /pictures/.pictures/picture1-" + str(self.name) + " /pictures/.pictures/picture2-" + str(self.name) + " /pictures/" + str(self.name) + ".jpg ; rm /pictures/.pictures/*"  
-      #subprocess.call(str(command), shell=True)
+
       if self.peso_lleno > 0 and self.peso_vacio > 0:
         self.peso_neto = self.peso_lleno - self.peso_vacio
+      # Nombre de la impresora 
+
+      impresora = self.env['impresora'].search([('state', '=', 'on')])
+  
+      if impresora[0].state == "on" :
+        subprocess.call('echo' + ' \"' + '--------------------------- \n '+ '$(TZ=GMT+6 date +%T%p_%D)' + '\n \n' + 
+        str(self.partner_id.name) + '\n' + str(self.placa_vehiculo) + '\n \n' +
+        'Ingreso: ' + str(self.peso_lleno) + ' kg \n' + 'Salida: ' + str(self.peso_vacio) + ' kg \n' + 'NETO: ' + str(self.peso_neto) + ' kg \n' 
+        +  '--------------------------- \n'+ '\"' + '| lp -d ' + str(impresora[0].name), shell=True)
 
 # ----------------------------AGREGAR LINEAS DE PRODUCTO ------------------------------------
 # Agregar linea Pedido Aluminio
