@@ -36,14 +36,9 @@
                                 </p>
                             </div>
                         </div>
-                        <h2 class="text-format" t-if="o.state != 'draft'">
-                        Factura de Compra N°
-                        
-                            <span class="text-format" t-field="o.name" />
-                        </h2>
                         <div class="row mt32 mb32 text-format">
                             <div t-if="o.name" class="col-xs-4">
-                                <strong>Número de Referencia:</strong>
+                                <strong>Factura de Compra N°:</strong>
                                 <p t-field="o.name" />
                             </div>
                             <div t-if="o.partner_ref" class="col-xs-3">
@@ -55,7 +50,7 @@
                                 <p t-field="o.date_order" />
                             </div>
                             <div t-if="o.validator" class="col-xs-3">
-                                <strong>Validated By:</strong>
+                                <strong>Validado por:</strong>
                                 <p t-field="o.validator" />
                             </div>
                         </div>

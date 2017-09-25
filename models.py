@@ -319,15 +319,16 @@ class purchase_order(models.Model):
 
       if self.peso_lleno > 0 and self.peso_vacio > 0:
         self.peso_neto = self.peso_lleno - self.peso_vacio
+      
       # Nombre de la impresora 
-
       impresora = self.env['impresora'].search([('state', '=', 'on')])
-  
-      if impresora[0].state == "on" :
-        subprocess.call('echo' + ' \"' + '--------------------------- \n '+ '$(TZ=GMT+6 date +%T%p_%D)' + '\n \n' + 
-        str(self.partner_id.name) + '\n' + str(self.placa_vehiculo) + '\n \n' +
-        'Ingreso: ' + str(self.peso_lleno) + ' kg \n' + 'Salida: ' + str(self.peso_vacio) + ' kg \n' + 'NETO: ' + str(self.peso_neto) + ' kg \n' 
-        +  '--------------------------- \n'+ '\"' + '| lp -d ' + str(impresora[0].name), shell=True)
+      
+      if len(impresora) > 0 :
+          if impresora[0].state == "on" :
+            subprocess.call('echo' + ' \"' + '------------------------ \n '+ '$(TZ=GMT+6 date +%T%p_%D)' + '\n \n' + 
+            str(self.partner_id.name) + '\n' + str(self.placa_vehiculo) + '\n \n' +
+            'Ingreso: ' + str(self.peso_lleno) + ' kg \n' + 'Salida: ' + str(self.peso_vacio) + ' kg \n' + 'NETO: ' + str(self.peso_neto) + ' kg \n' 
+            +  '------------------------ \n'+ '\"' + '| lp -d ' + str(impresora[0].name), shell=True)
 
 # ----------------------------AGREGAR LINEAS DE PRODUCTO ------------------------------------
 # Agregar linea Pedido Aluminio
