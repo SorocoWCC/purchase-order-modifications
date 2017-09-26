@@ -17,7 +17,8 @@ class product(models.Model):
     _inherit = 'product.template'
     sumar_validacion = fields.Boolean (string='NO sumar en validación:')
     precio_venta_informe = fields.Float (string = 'Precio de Venta Informe:')
-    calcular = fields.Boolean (string='Calcular peso en ordenes de compra:', default=True)   
+    calcular = fields.Boolean (string='Calcular peso en ordenes de compra:', default=True) 
+    tiquetes = fields.Boolean (string='Mostrar en sistema de tiquetes:', default=False)   
 
 # ----------------------------  CLASE HEREDADA - PROVEEDOR ------------------------------------
 class product(models.Model):

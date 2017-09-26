@@ -312,6 +312,7 @@
 				<field  name="sumar_validacion" />
 				<field  name="precio_venta_informe" />
 				<field  name="calcular" />
+				<field  name="tiquetes" />
 			</group>				   
 		</page>
 	</notebook>
