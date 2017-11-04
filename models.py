@@ -32,7 +32,7 @@ class product(models.Model):
 class user_purchase(models.Model):
     _name = 'res.users'
     _inherit = 'res.users'
-    purchase_type_user = fields.Selection ([('administrativo','Administrativo'), ('limitado','Limitado'), ('super', 'Super Usuario')], string='Tipo de Usuario para Compras', required=True)
+    purchase_type_user = fields.Selection ([('tablero', 'Tablero'), ('limitado','Limitado'), ('administrativo','Administrativo'), ('super', 'Super Usuario')], string='Tipo de Usuario para Compras', required=True)
 
 # ----------------------------  FIN HEREDADA - USERS ------------------------------------
 
