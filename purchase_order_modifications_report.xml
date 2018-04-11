@@ -19,6 +19,16 @@
             name="purchase_order_modifications.report_factura_de_compra_fotos_document" 
             file="Factura de Compra Fotos" 
         />
+
+        <report 
+            string="Certificado CO2" 
+            id="custom_report_certificado_co2" 
+            model="purchase.order" 
+            report_type="qweb-pdf"
+            name="purchase_order_modifications.report_certificado_co2_document" 
+            file="Certificado CO2" 
+        />
+
         <record id="paperformat_lowmargin" model="report.paperformat">
             <field name="name">Punto de Venta</field>
             <field name="default" eval="True" />
