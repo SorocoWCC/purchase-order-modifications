@@ -191,7 +191,7 @@ class purchase_order(models.Model):
 
             elif str(self.pago) == "regular" :
 
-                    # Valida si el usuario que creo la orden de compra es igual al cajero
+                # Valida si el usuario que creo la orden de compra es igual al cajero
                 if str(self.env.user.name) == str(self.validator.name) :
                     raise Warning ("Error: El usuario que valida el pedido de compra es igual al cajero")
                 
@@ -246,7 +246,7 @@ class purchase_order(models.Model):
         # Solo incluye las lineas de pedido si la factura esta vacia
         if len(self.order_line) == 0:
             # Incluye linea de Chatarra
-            res= self.env['product.template'].search([('name', '=', 'Chatarra')])
+            res= self.env['product.template'].search([['name', '=', 'Chatarra'], ['default_code', '=', 'CH']])
             self.order_line.create({'product_id': str(res.id), 'price_unit':str(res.list_price), 'order_id' : self.id, 'name': str(res.name),'calcular': True, 'date_planned': str(fields.Date.today())})
 
             # Incluye Linea de basura
