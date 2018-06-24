@@ -61,7 +61,6 @@
 		
 	</notebook>
 
-
 	<field name="taxes_id" position="attributes">
 	<attribute name="invisible">True</attribute>
 	</field>
@@ -83,7 +82,6 @@
 	<attribute name="invisible">True</attribute>
 	</button>
 
-
 	<button name="view_picking" position="attributes">
 	<attribute name="invisible">True</attribute>
 	</button>
@@ -91,11 +89,11 @@
 	<button name="invoice_open" position="attributes">
 	<attribute name="invisible">True</attribute>
 	</button>
-
+<!-- Boton para Cancelar la factura 
 	<button name="purchase_confirm" position="replace">
 	<button name="purchase_confirm" string="Confirmar Pedido" attrs="{'invisible': ['|', ('state','!=', 'confirmed')]}"/>
 	</button>
-
+-->
 	<field name="order_line" position="replace">
 	                            <field name="order_line" attrs="{'readonly': ['|', ('state','!=', 'draft')]}">
                                 	<tree string="Purchase Order Lines" editable="bottom">
@@ -155,12 +153,6 @@
 	<button name="action_cancel" position="before">
  	 <button name="action_quotation_paid" string="Pagar" type="object"
     	 class="oe_highlight" attrs="{'invisible': [ '|',  ('state','!=', 'approved'),('pago_caja','=', 'pagado')]}"/>
-        </button>
-
-<!-- Boton para Validar la factura --> 
-	<button name="action_cancel" position="before">
- 	 <button name="action_validation" string="Validar" type="object"
-    	 class="oe_highlight" attrs="{'invisible': ['|', ('shipped','=',True), ('state','!=', 'draft')]}"/>
         </button>
 
 <!-- Boton para pagar transferir

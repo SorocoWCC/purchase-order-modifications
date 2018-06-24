@@ -4,6 +4,8 @@ from openerp import models, fields, api
 import subprocess
 import time
 from openerp.exceptions import Warning
+import base64
+from openerp.http import request
 
 
 class impresora(models.Model):
@@ -102,10 +104,9 @@ class purchase_order(models.Model):
     def _update_co2(self):
         self.co2 = float(self.cantidad) / 1000
 
-
-# Validar la factura (Evaluar pesos y Fotos) "State Confirmed"
-    @api.one
-    def action_validation(self):
+    @api.multi
+    def wkf_confirm_order(self):
+        super(purchase_order, self).wkf_confirm_order()
         # Validacion de la cantidad de material facturado
         cantidad_facturable = 0
                
@@ -143,9 +144,6 @@ class purchase_order(models.Model):
                     #raise Warning ("Error en los pesos (Productos - Peso lleno - Peso Vacio)") 
                     print "Validacion Pesos"        
 
-            self.state= 'confirmed'
-
-
 # Marcar la factura como pagada y la asocia con los cierres de caja
     @api.one
     def action_quotation_paid(self):
@@ -153,10 +151,10 @@ class purchase_order(models.Model):
         # Valida si la factura fue cancelada antes de pagarla
         if str(self.state) == "cancel" :
             raise Warning ("Error: La factura fue cancelada")
-
+        #Cajeros    
         cajero_cierre_regular = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new'), ('tipo', '=', 'regular')])
         cajero_cierre_caja_chica = self.env['cierre'].search([('cajero', '=', str(self.env.user.name)), ('state', '=', 'new'), ('tipo', '=', 'caja_chica')])
-
+        # Cierres
         cierre_regular = self.env['cierre'].search([('state', '=', 'new'), ('tipo', '=', 'regular')])
         cierre_caja_chica = self.env['cierre'].search([('state', '=', 'new'), ('tipo', '=', 'caja_chica')])
 
@@ -245,8 +243,37 @@ class purchase_order(models.Model):
 # Tomar Fotos   
     @api.one
     def action_take_picture(self):
-        command= "TIME=`TZ=GMT+6 date +%D-%T`; fswebcam -d /dev/video0 -r 1280x720 --font Arial:30 --no-timestamp  --title \"$TIME\" --save /pictures/.pictures/picture1-" + str(self.name) + ";fswebcam -d /dev/video1 -r 1280x720 --no-timestamp --save /pictures/.pictures/picture2-" + str(self.name) + ";montage -geometry 400 /pictures/.pictures/picture1-" + str(self.name) + " /pictures/.pictures/picture2-" + str(self.name) + " /pictures/" + str(self.name) + ".jpg ; rm /pictures/.pictures/*"  
-        subprocess.call(str(command), shell=True)
+        # Solo incluye las lineas de pedido si la factura esta vacia
+        if len(self.order_line) == 0:
+            # Incluye linea de Chatarra
+            res= self.env['product.template'].search([('name', '=', 'Chatarra')])
+            self.order_line.create({'product_id': str(res.id), 'price_unit':str(res.list_price), 'order_id' : self.id, 'name': str(res.name),'calcular': True, 'date_planned': str(fields.Date.today())})
+
+            # Incluye Linea de basura
+            res_basura= self.env['product.template'].search([('name', '=', 'Basura Chatarra')])
+            self.order_line.create({'product_id': str(res_basura.id), 'price_unit':str(res_basura.list_price), 'order_id' : self.id, 'name': str(res_basura.name), 'date_planned': str(fields.Date.today())})
+
+        foto_nombre=str(fields.Date.today()) + "-" + str(self.name)
+        tomar_foto="pictures.sh " + foto_nombre
+        subprocess.call(str(tomar_foto), shell=True)
+
+        for line in self.order_line:
+            # No se adjuntan fotos a los productos especiales
+            if line.product_id.name != 'Basura Chatarra' and line.product_id.name != 'Prestamo' and line.product_id.name != 'Rebajo' :
+
+                if not line.imagen_lleno :
+                    file = open("/Documentos_Compartidos/Fotos/ODOO_Fotos/" + foto_nombre +".jpg", "rb")
+                    out = file.read()
+                    file.close()
+                    # Adjunta el archivo firmado a la factura
+                    line.imagen_lleno = base64.b64encode(out)
+                else:
+                    file = open("/Documentos_Compartidos/Fotos/ODOO_Fotos/" + foto_nombre +".jpg", "rb")
+                    out = file.read()
+                    file.close()
+                    line.imagen_vacio = base64.b64encode(out)
+                    #IP de donde viene el request
+                    #print "------> 1" + str(request.httprequest.environ['REMOTE_ADDR'])
 
 
 # Captura la informacion relevante del cliente : Prestamos, Mantenimiento y notas  
@@ -279,8 +306,10 @@ class purchase_order(models.Model):
             if str(cajero_cierre_caja_chica.cajero) == str(self.env.user.name) :
                 raise Warning ("Usuario no autorizado para crear facturas")
 
+
 # Calcular la cantidad del producto a facturar
     @api.one
+   # @api.onchange('peso_lleno', 'peso_vacio')
     def action_calcular_peso(self):
         
         # Validaciones peso lleno y vacio
@@ -330,6 +359,7 @@ class purchase_order(models.Model):
             str(self.partner_id.name) + '\n' + str(self.placa_vehiculo) + '\n \n' +
             'Ingreso: ' + str(self.peso_lleno) + ' kg \n' + 'Salida: ' + str(self.peso_vacio) + ' kg \n' + 'NETO: ' + str(self.peso_neto) + ' kg \n' 
             +  '------------------------ \n'+ '\"' + '| lp -d ' + str(impresora[0].name), shell=True)
+
 
 # ----------------------------AGREGAR LINEAS DE PRODUCTO ------------------------------------
 # Agregar linea Pedido Aluminio
