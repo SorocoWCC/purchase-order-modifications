@@ -144,7 +144,7 @@ class purchase_order(models.Model):
                     #raise Warning ("Error en los pesos (Productos - Peso lleno - Peso Vacio)") 
                     print "Validacion Pesos"        
 
-# Marcar la factura como pagada y la asocia con los cierres de caja
+    # Marcar la factura como pagada y la asocia con los cierres de caja
     @api.one
     def action_quotation_paid(self):
 
@@ -176,8 +176,8 @@ class purchase_order(models.Model):
             if str(self.pago) == "caja_chica":
                 if cierre_caja_chica.id == False:
                     raise Warning ("Error: Proceda a crear un cierre de caja tipo Caja Chica.")     
-
-            # Valida si el pago se puede realizar
+            #===============================================
+            # Valida facturas tipo Caja Chica
             if str(self.pago) == "caja_chica" :
 
                 if str(cajero_cierre_caja_chica.cajero) == str(self.env.user.name) :
@@ -188,7 +188,8 @@ class purchase_order(models.Model):
                     self.cierre_id_caja_chica = cajero_cierre_caja_chica.id
                 else:
                     raise Warning ("Usuario no autorizado para pagar facturas") 
-
+            #===============================================
+            # Valida facturas tipo Regular
             elif str(self.pago) == "regular" :
 
                 # Valida si el usuario que creo la orden de compra es igual al cajero
@@ -207,13 +208,16 @@ class purchase_order(models.Model):
                     self.cierre_id_caja_regular = cajero_cierre_regular.id
                 else:
                     raise Warning ("Usuario no autorizado para pagar facturas")
-
-            # Cualquier usuario puede pagar las ***muy paga *** 
+            #===============================================
+            # Valida las facturas tipo Muy Paga
             elif str(self.pago) == "muy" :
                 self.cajero_id = str(self.env.user.name)
                 self.fecha_pago = fields.Datetime.now()
                 self.pago_caja = 'pagado'
+                # Asocia el Nombre del cajera
                 self.cierre_id = cajero_cierre_regular.id
+                # Asocia el cierre de caja
+                self.cierre_id_caja_regular = cajero_cierre_regular.id
             
             else:
                 raise Warning ("Usuario no autorizado para pagar facturas") 
