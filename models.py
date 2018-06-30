@@ -3,6 +3,7 @@
 from openerp import models, fields, api
 import subprocess
 import time
+import datetime
 from openerp.exceptions import Warning
 import base64
 from openerp.http import request
@@ -257,7 +258,7 @@ class purchase_order(models.Model):
             res_basura= self.env['product.template'].search([('name', '=', 'Basura Chatarra')])
             self.order_line.create({'product_id': str(res_basura.id), 'price_unit':str(res_basura.list_price), 'order_id' : self.id, 'name': str(res_basura.name), 'date_planned': str(fields.Date.today())})
 
-        foto_nombre=str(fields.Date.today()) + "-" + str(self.name)
+        foto_nombre=str(datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")) + "-" + str(self.name)
         tomar_foto="pictures.sh " + foto_nombre
         subprocess.call(str(tomar_foto), shell=True)
 
@@ -269,6 +270,7 @@ class purchase_order(models.Model):
                     file = open("/Documentos_Compartidos/Fotos/ODOO_Fotos/" + foto_nombre +".jpg", "rb")
                     out = file.read()
                     file.close()
+                    break
                     # Adjunta el archivo firmado a la factura
                     line.imagen_lleno = base64.b64encode(out)
                 else:
@@ -276,6 +278,7 @@ class purchase_order(models.Model):
                     out = file.read()
                     file.close()
                     line.imagen_vacio = base64.b64encode(out)
+                    break
                     #IP de donde viene el request
                     #print "------> 1" + str(request.httprequest.environ['REMOTE_ADDR'])
 
