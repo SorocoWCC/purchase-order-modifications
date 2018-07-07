@@ -252,11 +252,11 @@ class purchase_order(models.Model):
         if len(self.order_line) == 0:
             # Incluye linea de Chatarra
             res= self.env['product.template'].search([['name', '=', 'Chatarra'], ['default_code', '=', 'CH']])
-            self.order_line.create({'product_id': str(res.id), 'price_unit':str(res.list_price), 'order_id' : self.id, 'name': str(res.name),'calcular': True, 'date_planned': str(fields.Date.today())})
+            self.order_line.create({'product_id': str(res.id), 'price_unit':str(res.list_price), 'order_id' : self.id, 'name': '[CH] Chatarra','calcular': True, 'date_planned': str(fields.Date.today())})
 
             # Incluye Linea de basura
             res_basura= self.env['product.template'].search([('name', '=', 'Basura Chatarra')])
-            self.order_line.create({'product_id': str(res_basura.id), 'price_unit':str(res_basura.list_price), 'order_id' : self.id, 'name': str(res_basura.name), 'date_planned': str(fields.Date.today())})
+            self.order_line.create({'product_id': str(res_basura.id), 'price_unit':str(res_basura.list_price), 'order_id' : self.id, 'name': '[BC] Basura Chatarra', 'date_planned': str(fields.Date.today())})
 
         foto_nombre=str(datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")) + "-" + str(self.name)
         tomar_foto="pictures.sh " + foto_nombre
@@ -270,9 +270,8 @@ class purchase_order(models.Model):
                     file = open("/Documentos_Compartidos/Fotos/ODOO_Fotos/" + foto_nombre +".jpg", "rb")
                     out = file.read()
                     file.close()
-                    break
-                    # Adjunta el archivo firmado a la factura
                     line.imagen_lleno = base64.b64encode(out)
+                    break
                 else:
                     file = open("/Documentos_Compartidos/Fotos/ODOO_Fotos/" + foto_nombre +".jpg", "rb")
                     out = file.read()
