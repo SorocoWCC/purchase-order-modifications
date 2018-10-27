@@ -164,7 +164,7 @@ class purchase_order(models.Model):
             self.cajero_id = str(self.env.user.name)
             self.fecha_pago = fields.Datetime.now()
             self.pago_caja = 'pagado'
-            self.cierre_id = cajero_cierre_regular.id
+            self.cierre_id = cierre_regular.id
             self.cierre_id_caja_chica = cajero_cierre_caja_chica.id
         else:
             # Valida si el usuario que creo la orden de compra es igual al cajero
@@ -185,7 +185,7 @@ class purchase_order(models.Model):
                     self.cajero_id = str(self.env.user.name)
                     self.fecha_pago = fields.Datetime.now()
                     self.pago_caja = 'pagado'
-                    self.cierre_id = cajero_cierre_regular.id
+                    self.cierre_id = cierre_regular.id
                     self.cierre_id_caja_chica = cajero_cierre_caja_chica.id
                 else:
                     raise Warning ("Usuario no autorizado para pagar facturas") 
@@ -205,7 +205,7 @@ class purchase_order(models.Model):
                     self.cajero_id = str(self.env.user.name)
                     self.fecha_pago = fields.Datetime.now()
                     self.pago_caja = 'pagado'
-                    self.cierre_id = cajero_cierre_regular.id
+                    self.cierre_id = cierre_regular.id
                     self.cierre_id_caja_regular = cajero_cierre_regular.id
                 else:
                     raise Warning ("Usuario no autorizado para pagar facturas")
