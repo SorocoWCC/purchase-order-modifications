@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <template id="assets_backend" inherit_id="web.assets_backend" name="custom assets">
+      <xpath expr="." position="inside">
+        <link href="/purchase_order_modifications/static/src/css/styles.css" rel="stylesheet"/>
+      </xpath>
+    </template>
+    <!-- Vista de formulario - Heredada - Invoice -->
+    <record id="sm_purchase_order" model="ir.ui.view">
+      <field name="name">purchase.purchase_order_form_inherit</field>
+      <field name="model">purchase.order</field>
+      <field name="inherit_id" ref="purchase.purchase_order_form"/>
+      <field name="arch" type="xml">
+        <field colspan="2" name="partner_id" position="after">
+          <field attrs="{'readonly': ['|', ('state','!=', 'draft')]}" name="peso_lleno"/>
+          <field attrs="{'readonly': ['|', ('state','!=', 'draft')]}" name="peso_vacio"/>
+          <field attrs="{'readonly': ['|', ('state','!=', 'draft')]}" name="peso_neto"/>
+        </field>
+        <field name="date_order" position="before">
+          <field attrs="{'readonly': ['|', ('state','!=', 'draft')]}" name="ficha"/>
+          <field attrs="{'readonly': ['|', ('state','!=', 'draft')]}" name="placa_vehiculo"/>
+          <!--<field attrs="{'readonly': ['|', ('state','!=', 'draft')]}" name="pago"/><field attrs="{'invisible': [('state','=','draft')], 'readonly': [('pago_caja','=', 'pagado')]}" height="150" name="imagen_pago" widget="image"/>-->
+        </field>
+        <field name="product_id" position="after">
+          <field attrs="{'readonly': ['|', ('state','!=', 'draft')]}" name="calcular"/>
+          <field name="imagen_lleno" widget="image"/>
+          <field name="imagen_vacio" widget="image"/>
+        </field>
+        <!-- Boton para pagar la factura 
+        <button name="button_cancel" position="before"><button attrs="{'invisible': [ '|',  ('state','!=', 'purchase'),('pago_caja','=', 'pagado')]}" class="oe_highlight" name="action_quotation_paid" string="Pagar" type="object"/></button>-->
+        <button name="action_view_invoice" position="attributes">
+          <attribute name="invisible">True</attribute>
+        </button>
+        <button name="action_view_invoice" position="attributes">
+          <attribute name="invisible">True</attribute>
+        </button>
+        <!-- Botones para calcular peso y tomar fotos -->
+        <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+          <button class="oe_inline oe_stat_button" icon="fa-camera" name="action_take_picture" string="Tomar Fotos" type="object"/>
+          <button class="oe_inline oe_stat_button" icon="fa-calculator" name="action_calcular_peso" string="Calcular" type="object"/>
+        </xpath>
+        <!-- Oculta fecha de entrega en las lineas de productos -->
+        <field name="date_planned" position="attributes">
+          <attribute name="invisible">True</attribute>
+        </field>
+        <!-- Solo lectura usuario que apruba la factura -->
+        <field name="user_id" position="attributes">
+          <attribute name="readonly">True</attribute>
+        </field>
+        <notebook position="inside">
+          <page string="Certificado">
+            <group>
+              <field name="cliente"/>
+              <field name="material_procesado"/>
+              <field name="cantidad"/>
+              <field name="periodo"/>
+              <field name="co2"/>
+            </group>
+          </page>
+        </notebook>
+      </field>
+    </record>
+    <!-- Vista de arbol - Heredada - Invoice -->
+    <record id="purchase_view_tree_form" model="ir.ui.view">
+      <field name="name">purchase_view_order_tree_heredada</field>
+      <field name="model">purchase.order</field>
+      <field name="inherit_id" ref="purchase.purchase_order_tree"/>
+      <field name="arch" type="xml">
+        <!--
+        <field name="amount_total" position="before"><field name="informacion"/></field><field name="date_order" position="after"><field name="fecha_pago"/></field><field name="state" position="before"><field name="pago_caja"/></field>-->
+        <field name="date_planned" position="attributes">
+          <attribute name="invisible">True</attribute>
+        </field>
+        <field name="date_order" position="after">
+          <field name="ficha"/>
+          <field name="placa_vehiculo"/>
+        </field>
+        <field name="amount_untaxed" position="attributes">
+          <attribute name="invisible">True</attribute>
+        </field>
+        <field name="origin" position="attributes">
+          <attribute name="invisible">True</attribute>
+        </field>
+      </field>
+    </record>
+  </data>
+</odoo>

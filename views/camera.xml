@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+
+    <!-- Action Camara-->
+    <record id="configuracion_camara_action" model="ir.actions.act_window">
+      <field name="name">Configuración Camaras</field>
+        <field name="res_model">camara</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">Presione aquí para crear una nueva camara.</p>
+        </field>
+    </record>
+
+    <!--Form View Camara-->
+      <record id="camara_form_view" model="ir.ui.view">
+      <field name="name">Camara Form View</field>
+        <field name="view_type">form</field>
+        <field name="model">camara</field>
+        <field name="arch" type="xml">
+          <form string="Configuración Camara"  version="7.0">
+            <header>  
+
+            </header>
+            <sheet string="Configuración Camara">
+              <group >      
+                <group>
+                  <field  name="ip"  />
+                  <field  name="tipo" />
+                  <field  name="usuario" />
+                  <field  name="contrasena" />
+                  </group>
+                </group>
+            </sheet>
+            <div class="oe_chatter">
+            </div>        
+          </form>
+        </field>
+      </record>
+
+      <!--Menu-->
+      <menuitem id="menu_camera_in_config_purchase" name="Camaras" parent="purchase.menu_purchase_config" action="configuracion_camara_action" />
+
+  </data>
+</odoo>

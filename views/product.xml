@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <data>
+
+    <!-- Vista de formulario - Heredada - Product -->
+    <record model="ir.ui.view" id="product_template_view_form">
+      <field name="name">product_template_view_form_inherit</field>
+      <field name="model">product.template</field>
+      <field name="inherit_id" ref="product.product_template_only_form_view"/>
+      <field name="arch" type="xml">
+        <notebook position="inside" >
+          <page string="Configuración" groups="base.group_system">
+            <group>
+              <field  name="sumar_validacion" />
+              <field  name="calcular" />
+            </group>           
+          </page>
+        </notebook>
+      </field>
+    </record>
+  </data>
+</odoo>

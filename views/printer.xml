@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+
+    <!-- Action Impresora-->
+    <record id="configuracion_impresora_action" model="ir.actions.act_window">
+      <field name="name">Configuracion Impresora</field>
+        <field name="res_model">impresora</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">Presione aquí para crear una nueva impresora.</p>
+        </field>
+    </record>
+
+    <!--Form View Impresora-->
+      <record id="gasto_form_view" model="ir.ui.view">
+      <field name="name">configuracion_impresora.form.view</field>
+        <field name="view_type">form</field>
+        <field name="model">impresora</field>
+        <field name="arch" type="xml">
+          <form string="Configuracion Impresora"  version="7.0">
+            <header>  
+
+            </header>
+            <sheet string="Configuracion Impresora">
+              <group >      
+                <group>
+                  <field  name="name"  />
+                  <field  name="state"  />
+                  </group>
+                </group>
+            </sheet>
+            <div class="oe_chatter">
+            </div>        
+          </form>
+        </field>
+      </record>
+
+      <!--Menu-->
+      <menuitem id="menu_product_in_config_purchase" name="Impresora" parent="purchase.menu_purchase_config" action="configuracion_impresora_action" />
+
+
+  </data>
+</odoo>

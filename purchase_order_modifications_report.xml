@@ -7,7 +7,7 @@
             id="custom_report_tiquete_compra" 
             model="purchase.order" 
             report_type="qweb-pdf"
-            name="purchase_order_modifications.report_tiquete_compra_document" 
+            name="purchase_order_modifications.report_tiquete_compra" 
             file="Tiquete Compra" 
         />
 
@@ -44,10 +44,8 @@
             <field name="header_spacing">0</field>
             <field name="dpi">90</field>
         </record>
-
-        <record id="purchase_order_modifications.custom_report_tiquete_compra" model="ir.actions.report.xml">
+        <record id="purchase_order_modifications.custom_report_tiquete_compra" model="ir.actions.report">
             <field name="paperformat_id" ref="purchase_order_modifications.paperformat_lowmargin" />
         </record>
-      
     </data>
 </openerp>
