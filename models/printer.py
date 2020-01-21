@@ -7,5 +7,5 @@ from openerp.exceptions import Warning
 
 class impresora(models.Model):
     _name = 'impresora'
-    name = fields.Char(string= 'Impresora')
+    name = fields.Char(string= 'Nombre')
     state = fields.Selection ([('on', 'ON'), ('off','OFF') ], string='Estado', default='off')

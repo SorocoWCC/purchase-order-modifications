@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <!-- Secuencias: 0 = Siempre actualiza | 1 = Solo en la instalacion  -->
+    <data noupdate="0">
+
+        <!-- Crear Reporte diario -->
+        <function id="function_without_params" model="movement_conf" name="action_create_conf"/>
+
+    </data>
+</openerp>

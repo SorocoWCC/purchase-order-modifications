@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Action Movement-->
+    <record id="configuracion_movement_action" model="ir.actions.act_window">
+      <field name="name">Configuracion Albaranes</field>
+      <field name="res_model">movement_conf</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="help" type="html">
+        <p class="oe_view_nocontent_create">Presione aquí para crear una nueva Configuracion.</p>
+      </field>
+    </record>
+    <!--Form View Configuracion Albaranes-->
+    <record id="configuracion_movement_view" model="ir.ui.view">
+      <field name="name">configuracion_movement.form.view</field>
+      <field name="view_type">form</field>
+      <field name="model">movement_conf</field>
+      <field name="arch" type="xml">
+        <form string="Configuracion Albaranes" version="7.0">
+          <header>
+            <field name="name"/>
+          </header>
+          <sheet string="Configuracion Albaranes">
+            <group>
+              <group>
+                <field name="configuracion" widget="radio"/>
+              </group>
+            </group>
+          </sheet>
+          <div class="oe_chatter"/>
+        </form>
+      </field>
+    </record>
+    <!--Tree View Cierre de Caja-->
+    <record id="configuracion_movement_tree_view" model="ir.ui.view">
+      <field name="name">configuration_movement.tree.view</field>
+      <field name="view_type">tree</field>
+      <field name="model">movement_conf</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="configuracion"/>
+          <button icon="fa-play" name="action_cambiar" type="object"/>
+        </tree>
+      </field>
+    </record>
+    <!--Menu-->
+    <menuitem action="configuracion_movement_action" id="menu_purchase_control" name="Manejo Albaranes" parent="purchase.menu_purchase_root"/>
+  </data>
+</odoo>

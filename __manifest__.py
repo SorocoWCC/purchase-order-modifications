@@ -24,12 +24,13 @@
     # always loaded
     'data': [
         'purchase_order_modifications_report.xml',
-        #'views/views.xml',
+        'data/configuration.xml',
         'views/templates.xml',
         'views/purchase_order.xml',
         'views/product.xml',
         'views/printer.xml',
         'views/camera.xml',
+        'views/movement_conf.xml',
         'views/report_tiquete_compra.xml',
         'views/report_factura_de_compra_fotos.xml'
 

@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from . import models, purchase_order, order_line, product, printer, camera
+from . import models, purchase_order, order_line, product, printer, camera, movement_conf
