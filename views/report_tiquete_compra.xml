@@ -83,6 +83,22 @@
                       <t t-esc="o.partner_id.name"/>
                     </td>
                   </tr>
+                  <t t-if="o.placa_vehiculo">
+                    <tr>
+                      <td>Placa:</td>
+                      <td>
+                        <t t-esc="o.placa_vehiculo"/>
+                      </td>
+                    </tr>
+                  </t>
+                  <t t-if="o.ficha">
+                    <tr>
+                      <td>Ficha:</td>
+                      <td>
+                        <t t-esc="o.ficha"/>
+                      </td>
+                    </tr>
+                  </t>
                 </table>
                 <t t-if="o.peso_lleno &gt; 0 ">
                   <table class="ticket-header">

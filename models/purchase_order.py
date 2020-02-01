@@ -47,6 +47,10 @@ class purchase_order(models.Model):
         mensaje = "<p>Factura aprobada por: " + str(self.env.user.name) + " - " +datetime.now(timezone('America/Costa_Rica')).strftime("%Y-%m-%d %H:%M:%S") + "</p>"
         self.message_post(body=mensaje, content_subtype='html')
 
+        # Imprimir tiquete de compra caja chica
+        if self.tipo_pago == "caja_chica":
+            return self.env.ref('purchase_order_modifications.custom_report_tiquete_compra').report_action(self)
+
 # Calcular la cantidad del producto a facturar
     @api.one
    # @api.onchange('peso_lleno', 'peso_vacio')
