@@ -118,6 +118,7 @@ class purchase_order(models.Model):
             #self.order_line.create({'product_id': str(res_basura.id), 'price_unit':str(res_basura.list_price), 'order_id' : self.id, 'name': '[BC] Basura Chatarra', 'date_planned': str(fields.Date.today())})
 
         for line in self.order_line:
+
             camara_romana = self.env['camara'].search([['tipo', '=', 'romana']])
             camara_indicador = self.env['camara'].search([['tipo', '=', 'indicador']])
             imagen_vivo = IM({"ip": camara_romana[0].ip, "user": camara_romana[0].usuario, "passwd": camara_romana[0].contrasena}, {"ip": camara_indicador[0].ip, "user": camara_indicador[0].usuario, "passwd": camara_indicador[0].contrasena})
@@ -125,14 +126,15 @@ class purchase_order(models.Model):
             # No se adjuntan fotos a los productos especiales
             if line.product_id.name != 'Basura Chatarra' and line.product_id.name != 'Prestamo' and line.product_id.name != 'Rebajo' :
 
-                res = imagen_vivo.get_image()
-               
                 try:
+                    res = imagen_vivo.get_image()
                     if not line.imagen_lleno :
                         line.imagen_lleno = res["image"]
+
                         break
                     elif not line.imagen_vacio :
                         line.imagen_vacio = res["image"]
+
                         break
                 except:
                     self.env.user.notify_danger(message='Error al obtener las imagenes.')

@@ -39,6 +39,19 @@
         </field>
       </record>
 
+        <!--Tree View Camara-->
+        <record id="camara_tree_view" model="ir.ui.view">
+            <field name="name">camara.tree.view</field>
+            <field name="view_type">tree</field>
+            <field name="model">camara</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="tipo"/>
+                    <field name="ip"/>
+                </tree>
+            </field>
+        </record>
+
       <!--Menu-->
       <menuitem id="menu_camera_in_config_purchase" name="Camaras" parent="purchase.menu_purchase_config" action="configuracion_camara_action" />
 

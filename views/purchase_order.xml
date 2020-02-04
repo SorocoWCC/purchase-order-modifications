@@ -32,6 +32,9 @@
         <button name="action_view_invoice" position="attributes">
           <attribute name="invisible">True</attribute>
         </button>
+          <button name="button_draft" position="attributes">
+          <attribute name="invisible">True</attribute>
+        </button>
         <button name="action_view_invoice" position="attributes">
           <attribute name="invisible">True</attribute>
         </button>
