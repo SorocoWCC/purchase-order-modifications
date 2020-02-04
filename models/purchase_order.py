@@ -114,8 +114,8 @@ class purchase_order(models.Model):
             self.order_line.create({'product_id': str(res.id), 'price_unit':str(res.list_price), 'order_id' : self.id, 'name': '[CH] Chatarra','calcular': True, 'date_planned': str(fields.Date.today()), 'product_qty': 1, 'product_uom': str(res.uom_po_id.id)})
 
             # Incluye Linea de basura
-            #res_basura= self.env['product.template'].search([('name', '=', 'Basura Chatarra')])
-            #self.order_line.create({'product_id': str(res_basura.id), 'price_unit':str(res_basura.list_price), 'order_id' : self.id, 'name': '[BC] Basura Chatarra', 'date_planned': str(fields.Date.today())})
+            res_basura= self.env['product.template'].search([('name', '=', 'Basura Chatarra')])
+            self.order_line.create({'product_id': str(res_basura.id), 'price_unit':str(res_basura.list_price), 'order_id' : self.id, 'name': '[BC] Basura Chatarra', 'date_planned': str(fields.Date.today()), 'product_qty': 1, 'product_uom': str(res_basura.uom_po_id.id)})
 
         for line in self.order_line:
 
