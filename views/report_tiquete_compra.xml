@@ -146,9 +146,9 @@
                   </table>
                 </t>
                 <div class="ticket-footer text-center">
-                  <h4>Total: ₡
+                  <h2>Total: ₡
                                         
-                    <t t-esc="'{0:,.2f}'.format(int(o.amount_total))"/></h4>
+                    <t t-esc="'{0:,.2f}'.format(int(o.amount_total))"/></h2>
                   <h6>Gracias por preferirnos</h6>
                 </div>
               </div>
