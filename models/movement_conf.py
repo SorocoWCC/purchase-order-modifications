@@ -36,8 +36,10 @@ class movement_conf(models.Model):
             stock_picking = self.env['stock.picking'].search([('state', '=', 'assigned')])
             if stock_picking:
                 for stock_move in stock_picking:
+                    purchase_order = self.env['purchase.order'].search([('name', '=', stock_move.origin)])
+                    if purchase_order.pago_caja == 'pagado':
 
-                    for move in stock_move.move_ids_without_package:
-                        move.quantity_done = move.product_uom_qty
+                        for move in stock_move.move_ids_without_package:
+                            move.quantity_done = move.product_uom_qty
 
-                    stock_move.button_validate()
+                        stock_move.button_validate()
