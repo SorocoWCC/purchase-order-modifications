@@ -29,13 +29,7 @@
         </field>
         <!-- Boton para pagar la factura 
         <button name="button_cancel" position="before"><button attrs="{'invisible': [ '|',  ('state','!=', 'purchase'),('pago_caja','=', 'pagado')]}" class="oe_highlight" name="action_quotation_paid" string="Pagar" type="object"/></button>-->
-        <button name="action_view_invoice" position="attributes">
-          <attribute name="invisible">True</attribute>
-        </button>
           <button name="button_draft" position="attributes">
-          <attribute name="invisible">True</attribute>
-        </button>
-        <button name="action_view_invoice" position="attributes">
           <attribute name="invisible">True</attribute>
         </button>
         <!-- Botones para calcular peso y tomar fotos -->
