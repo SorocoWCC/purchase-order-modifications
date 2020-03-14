@@ -43,12 +43,15 @@ class purchase_order(models.Model):
         if not order_line:
             raise Warning ("Error: La orden de compra no contiene productos.")
         
+        # Validacion de prestamos
+
         self.user_id = self.env.user
         mensaje = "<p>Factura aprobada por: " + str(self.env.user.name) + " - " +datetime.now(timezone('America/Costa_Rica')).strftime("%Y-%m-%d %H:%M:%S") + "</p>"
         self.message_post(body=mensaje, content_subtype='html')
 
         # Imprimir tiquete de compra caja chica
-        if self.tipo_pago == "caja_chica":
+        if self.tipo_pago in ["caja_chica", "muy"] :
+            print("Estoy dentro ======")
             return self.env.ref('purchase_order_modifications.custom_report_tiquete_compra').report_action(self)
 
 # Calcular la cantidad del producto a facturar

@@ -6,6 +6,7 @@
         <div class="page">
           <style type="text/css">h4 {
                         font-weight:bold;
+                        text-align: center;
                     }
 
                     h5, h6 {
@@ -135,12 +136,16 @@
                       <td>Precio:</td>
                       <td>₡
                                                 
+                        
+                        
                         <t t-esc="'{0:,.2f}'.format(int(i.price_unit))"/></td>
                     </tr>
                     <tr>
                       <td>Subtotal:</td>
                       <td>₡
                                                 
+                        
+                        
                         <t t-esc="'{0:,.2f}'.format(int(i.price_subtotal))"/></td>
                     </tr>
                   </table>
@@ -148,6 +153,8 @@
                 <div class="ticket-footer text-center">
                   <h2>Total: ₡
                                         
+                    
+                    
                     <t t-esc="'{0:,.2f}'.format(int(o.amount_total))"/></h2>
                   <h6>Gracias por preferirnos</h6>
                 </div>
@@ -156,7 +163,7 @@
           </div>
           <p style="page-break-after:always;"/>
           <t t-as="i" t-foreach="o.order_line">
-            <t t-if="i.name == '[PRE] Prestamo' and o.pago_caja == 'pagado'">
+            <t t-if="i.name == '[PR] Prestamo'">
               <div class="row">
                 <div class="container ticket-container">
                   <div class="ticket-heading text-center">
@@ -171,10 +178,19 @@
                         <th class="text-center" colspan="2">Recibo de Dinero</th>
                       </tr>
                       <tr>
-                        <td>Fecha: </td>
-                        <td>
-                          <span class="oe_editable" t-field="o.date_order"/>
-                          <br/>
+                        <td>Fecha:</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">
+                          <t t-esc="o.date_order"/>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Monto Prestamo:</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2">₡ 
+                          <t t-esc="'{0:,.2f}'.format(int(o.prestamo_total))"/>
                         </td>
                       </tr>
                       <tr>
@@ -190,7 +206,8 @@
                       </tr>
                       <tr>
                         <td colspan="2">₡ 
-                          <t t-esc="'{0:,.2f}'.format(-int(i.price_unit))"/></td>
+                          <t t-esc="'{0:,.2f}'.format(-int(i.price_unit))"/>
+                        </td>
                       </tr>
                       <tr>
                         <td colspan="2">Por concepto de: </td>
@@ -201,12 +218,16 @@
                     </table>
                     <div class="ticket-footer text-center">
                       <h4>Saldo: ₡  
-                        <t t-esc="float(o.prestamo_info) + i.price_unit"/></h4>
+                        <t t-esc="float(o.prestamo_saldo) + i.price_unit"/></h4>
                     </div>
                     <div style="height: 50px; "/>
                     <div style="text-align:center">________________ 
+                      
+                      
                       <br/>
                       Firma Cliente 
+                      
+                      
                       <br/></div>
                   </div>
                 </div>
@@ -216,19 +237,14 @@
         </div>
       </t>
     </template>
-
-
-<template id="report_tiquete_compra">
-<t t-name="purchase_order_modifications.report_tiquete_compra">
-            <t t-call="web.html_container">
-                <t t-foreach="docs" t-as="o">
-                    <t t-call="purchase_order_modifications.report_tiquete_compra_document" t-lang="o.partner_id.lang"/>
-                </t>
-            </t>
+    <template id="report_tiquete_compra">
+      <t t-name="purchase_order_modifications.report_tiquete_compra">
+        <t t-call="web.html_container">
+          <t t-as="o" t-foreach="docs">
+            <t t-call="purchase_order_modifications.report_tiquete_compra_document" t-lang="o.partner_id.lang"/>
+          </t>
         </t>
-</template>
-
-
-
+      </t>
+    </template>
   </data>
 </openerp>
