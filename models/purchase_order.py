@@ -119,27 +119,39 @@ class purchase_order(models.Model):
             res_basura= self.env['product.template'].search([('name', '=', 'Basura Chatarra')])
             self.order_line.create({'product_id': str(res_basura.id), 'price_unit':str(res_basura.list_price), 'order_id' : self.id, 'name': '[BC] Basura Chatarra', 'date_planned': str(fields.Date.today()), 'product_qty': 1, 'product_uom': str(res_basura.uom_po_id.id)})
 
+        line_position = 0
         for line in self.order_line:
 
+            line_position += 1
             camara_romana = self.env['camara'].search([['tipo', '=', 'romana']])
             camara_indicador = self.env['camara'].search([['tipo', '=', 'indicador']])
             imagen_vivo = IM({"ip": camara_romana[0].ip, "user": camara_romana[0].usuario, "passwd": camara_romana[0].contrasena}, {"ip": camara_indicador[0].ip, "user": camara_indicador[0].usuario, "passwd": camara_indicador[0].contrasena})
             
-            # No se adjuntan fotos a los productos especiales
-            if line.product_id.name != 'Basura Chatarra' and line.product_id.name != 'Prestamo' and line.product_id.name != 'Rebajo' :
+            try:
+                res = imagen_vivo.get_image()
+            except:
+                self.env.user.notify_danger(message='Error al obtener las imagenes.')
 
-                try:
-                    res = imagen_vivo.get_image()
+            # Fotos para la primera linea    
+            if line_position <= 1 :
+                # No se adjuntan fotos a los productos especiales
+                if line.product_id.name != 'Basura Chatarra' and line.product_id.name != 'Prestamo' and line.product_id.name != 'Rebajo' :
+
                     if not line.imagen_lleno :
                         line.imagen_lleno = res["image"]
-
                         break
                     elif not line.imagen_vacio :
                         line.imagen_vacio = res["image"]
-
                         break
-                except:
-                    self.env.user.notify_danger(message='Error al obtener las imagenes.')
+            # Fotos para doble pesa            
+            else:
+                if line.product_id.name != 'Basura Chatarra' and line.product_id.name != 'Prestamo' and line.product_id.name != 'Rebajo' :
+                    if not line.imagen_lleno:
+                        for reverse_line in reversed(self.order_line):
+                            if reverse_line.product_id.name != 'Basura Chatarra' and reverse_line.product_id.name != 'Prestamo' and reverse_line.product_id.name != 'Rebajo' and reverse_line.imagen_vacio:
+                                line.imagen_lleno = reverse_line.imagen_vacio
+                    elif not line.imagen_vacio :
+                        line.imagen_vacio = res["image"]
 
 # Captura la informacion relevante del cliente : Prestamos, Mantenimiento y notas  
     @api.onchange('partner_id')
