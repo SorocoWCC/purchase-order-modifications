@@ -7,4 +7,5 @@ class product(models.Model):
     _inherit = 'product.template'
     sumar_validacion = fields.Boolean (string='NO sumar en validación:')
     calcular = fields.Boolean (string='Calcular peso en ordenes de compra:', default=True) 
+    factor_conversion = fields.Float(string='Factor Conversión:') 
 	

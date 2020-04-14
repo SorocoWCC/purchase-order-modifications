@@ -13,6 +13,7 @@
             <group>
               <field  name="sumar_validacion" />
               <field  name="calcular" />
+              <field  name="factor_conversion" />
             </group>           
           </page>
         </notebook>

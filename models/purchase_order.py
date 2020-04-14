@@ -22,7 +22,7 @@ class purchase_order(models.Model):
     cliente = fields.Char(string="Cliente")
     cantidad = fields.Integer(string="Cantidad (KG)", default=1)
     material_procesado = fields.Char(string="Material Procesado", default="Desechos Reciclables")
-    co2 = fields.Char(store=True, string="CO2")
+    co2 = fields.Integer(store=True, string="CO2")
     periodo = fields.Char(string="Periodo")
     peso_lleno = fields.Float(string="Peso Lleno")
     peso_vacio = fields.Float(string="Peso Vacio")

@@ -1,162 +1,215 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openerp>
-    <data>
-        <template id="report_certificado_co2_document">
-            <t t-foreach="docs" t-as="o">
-                <div class="page" t-attf-style="background-image:url('/purchase_order_modifications/static/background.png'); background-size:240mm 330mm; width:240mm; height:330mm;">
-                   
+   <data>
+      <template id="report_certificado_co2_document">
+         <t t-as="o" t-foreach="docs">
+            <t t-call="web.html_container">
+               <t t-call="purchase_order_modifications.external_factura_electronica">
+                  <div class="page" t-attf-style="background-image:url('/purchase_order_modifications/static/background.png'); background-size:240mm 340mm; width:240mm; height:340mm;">
+                 
 
-      <div class="oe_structure" />
-      <div class="row">
-         <div align="center">
-            
-            <div style="height: 270px"/>
-            <h5 style="border-bottom: 2px solid green;width: 41%;">
-               <strong>PROGRAMA DE PROTECCIÓN AL MEDIO AMBIENTE</strong>
-            </h5>
-            <br />
-         </div>
-         <div align="center">
-            Manejo y seguimiento de una integración ambientalmente segura para los materiales reciclables, una alternativa sostenible y responsable
-            <br />
-            con el medio ambiente.
-            <h4 style="color:green;">
-               <b>CERTIFICADO DE GESTIÓN EN COPROCESAMIENTO DE MATERIALES.</b>
-            </h4>
-            <b>Registro de Gestor Autorizado en Residuos DPAH-UASSAH-RGA-104-2015</b>
-         </div>
-         <br />
-         <div align="center">
-            <table style=" border: 2px solid green; text-align: center; width: 95%; align=center;">
-               <tbody>
-                  <tr>
-                     <td style="border: medium hidden; text-align: justify;">Le hacemos colaborador del PROGRAMA DE PROTECCIÓN AL MEDIO AMBIENTE, al otorgar a los materiales reciclables abajo indicados, un manejo y coprocesamiento amigable con la preservación de la naturaleza, por medio de una integración ambientalmente segura. Agradecemos la oportunidad que nos brinda para evitar la degradación del medio ambiente y la conciencia ecológica manifestada por su esfuerzo y destacada labor al reconocer que nuestro planeta es un gigantesco ecosistema en el que los problemas ambientales nos afectan a todos, gracias al actuar ejemplar de la empresa:</td>
-                  </tr>
-               </tbody>
-            </table>
-         </div>
-         <div align="center">
-            <h4>
-               <b>
-                  <span class="oe_editable" t-field="o.cliente" />
-               </b>
-            </h4>
-            <br />
-         </div>
-         <div align="center">
-            <table style=" border: 2px solid green; text-align: center; width: 95%; align=center;">
-               <tbody>
-                  <tr>
-                     <td style="width: 20%; border: 2px solid green; vertical-align:middle;">
-                        <b>Material Co-Procesado</b>
-                     </td>
-                     <td style="width: 20%; border: 2px solid green;vertical-align:middle;">
-                        <b>Periodo</b>
-                     </td>
-                     <td style="width: 20%; border: 2px solid green;vertical-align:middle;">
-                        <b>Cantidad</b>
-                     </td>
-                     <td style="border: 2px solid green;">
-                        <b>Mediante el coprocesamiento de este material se evitó la generación de Metano y CO2, principales causantes del efecto invernadero.</b>
-                     </td>
-                  </tr>
-                  <tr>
-                     <td style="width: 20%; border: 2px solid green;">
-                        <b>
-                           <span class="oe_editable" t-field="o.material_procesado" />
-                        </b>
-                     </td>
-                     <td style="width: 20%; border: 2px solid green;">
-                        <b>
-                           <span class="oe_editable" t-field="o.periodo" />
-                        </b>
-                     </td>
-                     <td style="width: 20%; border: 2px solid green;">
-                        <b>
-                           <span class="oe_editable" t-field="o.cantidad" />
-                           KG
-                        </b>
-                     </td>
-                     <td style="border: 2px solid green;">
-                        <b />
+                     <style>
+
+                        .main_title {
+                           border-bottom: 2px solid green;
+                           width:70%;
+                           text-align:center;
+                           align:center;
+                           font-weight: bold;
+                           color: black
+                        }
+
+                        .div_spacer {
+                           height: 270px;
+                        }
+
+                        .table_row_general {
+                           background-color: white;
+                           border: medium hidden; 
+                           text-align: justify;
+                        }
+
+                        .table_row_materials {
+                           width: 20%; 
+                           border: 2px solid green;
+                           vertical-align: middle;
+                           background-color: white;
+                        }
+                     </style>
+
+                     <div class="div_spacer" />
+                     <div>
+                     <center>               
+                        <h5 class="main_title"> PROGRAMA DE PROTECCIÓN AL MEDIO AMBIENTE </h5>
+                     </center>
+                     </div>
+
+                     <div align="center">
+                        <br/>
+                        Manejo y seguimiento de una integración ambientalmente segura para los materiales reciclables, una alternativa sostenible y responsable con el medio ambiente.
+                        <br/>
+                        <br/>
+                        <h4 style="color:green;">
+                           <b>CERTIFICADO DE TRAZABILIDAD DE MATERIALES</b>
+                        </h4>
+                        <b>Registro de Gestor Autorizado en Residuos DPAH-UASSAH-RGA-104-2015</b>
+                        <br/>
+                        <br/>
+                     </div>
+                     
+                     <div align="center">
+                        <table style=" border: 2px solid green; text-align: center; width: 95%; align=center;">
+                           <tbody>
+                              <tr>
+                                 <td class="table_row_general">Le hacemos colaborador del PROGRAMA DE PROTECCIÓN AL MEDIO AMBIENTE, al otorgar a los materiales reciclables abajo indicados, una trazabilidad y manejo amigable con la preservación de la naturaleza, por medio de una integración ambientalmente segura. Agradecemos la oportunidad que nos brinda para evitar la degradación del medio ambiente y la conciencia ecológica manifestada por su esfuerzo y destacada labor al reconocer que nuestro planeta es un gigantesco ecosistema en el que los problemas ambientales nos afectan a todos, gracias al actuar ejemplar de la empresa:</td>
+                              </tr>
+                           </tbody>
+                        </table>
+                        <br/>
+                     </div>
+
+                     <div align="center">
                         <h4>
                            <b>
-                              <h4 style="color:green;">
-                                 <b>
-                                    <span class="oe_editable" t-field="o.co2" />
-                                    TON
-                                 </b>
-                              </h4>
+                                 <span t-if="o.cliente" class="oe_editable" t-field="o.cliente" />
+                                 <span t-else="" class="oe_editable" t-field="o.partner_id.name" />
                            </b>
                         </h4>
-                     </td>
-                  </tr>
-               </tbody>
-            </table>
-            <table style="text-align: left; width: 95%; align=center;border:hidden">
-               <tbody>
-                  <tr>
-                     <td style="width: 30%;text-align: left;border-right:hidden">
                         <br />
-                        Código Certificado : 
-                        <span class="oe_editable" t-field="o.name" />
-                        - [ <span class="oe_editable" t-field="o.minimum_planned_date" /> ]
-                     </td>
+                     </div>
 
-                     <th style="width: 20%;border-right:hidden" />
-                     <th style="width: 20%;border-right:hidden" />
-                     <th />
-                  </tr>
-               </tbody>
-            </table>
-         </div>
-         <div>
-            <p />
-         </div>
-         <div align="center">
-            <table style="text-align: center; width: 90%; align=center;">
-               <tbody>
-                  <tr>
-                     <td style="width: 20%;border:hidden">
-                        <br />
-                        <div style="height: 80px"/>
-                        <br />
-                        
-                     </td>
-                     <td style="width: 20%border:hidden;border-top:hidden;border-bottom:hidden" />
-                     <td style="width: 20%;border:hidden" />
-                     <td style="width: 20%;border:hidden">
-                        <br />
-                        
-                        <br />
-                        
-                     </td>
-                  </tr>
-                  <tr>
-                     <td colspan="4" style="border:hidden;border-top:hidden;border-bottom:hidden">
-                        <br />
-                        <strong style="border-bottom: 2px solid green;width: 41%;">Recicladora San Miguel, Inyectando Toneladas de Reciclaje a la Recuperación del Planeta</strong>
-                        <br />
-                        www.recicladorasanmiguel.com | Tel: (+506) 2275-1833
-                        <br />
-                     </td>
-                  </tr>
-               </tbody>
-            </table>
-         </div>
-      </div>
-      <div class="oe_structure" />
+                     <div align="center">
+                        <table style=" border: 2px solid green; text-align: center; width: 95%; align=center;">
+                           <tbody>
+                              <tr>
+                                 <td class="table_row_materials">
+                                    <b>Material</b>
+                                 </td>
+                                 <td class="table_row_materials">
+                                    <b>Cantidad KG </b>
+                                 </td>
+                                 <td style="border: 2px solid green;background-color: white;">
+                                    <b>Toneladas de Emisiones de CO2e</b>
+                                 </td>
+                              </tr>
+                              <tr t-if="o.cantidad > 0 " >
+                                 <td style="width: 20%; border: 2px solid green;">
+                                    <b>
+                                       <span class="oe_editable" t-field="o.material_procesado" />
+                                    </b>
+                                 </td>
+                                 <td style="width: 20%; border: 2px solid green;">
+                                    <b>
+                                       <span class="oe_editable" t-field="o.cantidad" />
+                                       KG
+                                    </b>
+                                 </td>
+                                 <td style="border: 2px solid green;">
+                                    <b />
+                                    <h4>
+                                       <b>
+                                          <h4 style="color:green;">
+                                             <b>
+                                                <span class="oe_editable" t-field="o.co2" />
+                                                TON
+                                             </b>
+                                          </h4>
+                                       </b>
+                                    </h4>
+                                 </td>
+                              </tr>
 
+                              <t t-else="">
+                                 <!-- Sumatoria de emisiones co2 -->
+                                 <t t-set="total_emisiones" t-value="0"/>
+                                 <t t-set="total_materiales" t-value="0"/>
 
 
+                                 <t t-foreach="o.order_line" t-as="line" >
+                                    <tr t-if="line.product_id.factor_conversion > 0" >
+                                       <td class="table_row_materials">
+                                          <span class="oe_editable" t-field="line.product_id.name" />
+                                       </td>
+                                       <td class="table_row_materials">
+                                          <span class="oe_editable" t-field="line.product_qty" />
+                                          <t t-set="total_materiales" t-value="total_materiales + line.product_qty"/>
+                                       </td>
+                                       <td class="table_row_materials">
+                                          <span class="oe_editable" t-esc="line.product_id.factor_conversion * line.product_qty"/>
+                                          <t t-set="total_emisiones" t-value="total_emisiones + line.product_id.factor_conversion * line.product_qty"/>
+                                       </td>
+                                    </tr> 
+                                 </t>  
+                                 <tr>
+                                       <td class="table_row_materials"> <b> Total </b> </td>
+                                       <td class="table_row_materials"> <b> <t t-esc="total_materiales"/> </b> </td>
+                                       <td class="table_row_materials"> <b> <t t-esc="total_emisiones"/> </b> </td>   
+                                    </tr>
+                              </t>
+                           </tbody>
+                        </table>
+                     </div>
+
+
+                        <!-- Numero y Fecha del Certificado -->
+                        <div style="align:center; margin-left: 21px;" >
+                        <br/>
+                           Código Certificado : <span class="oe_editable" t-field="o.name" /> -
+
+                           [ <span class="oe_editable"  t-field="o.date_order"/> ]
+                        </div>   
+
+
+                     <div>
+                        <p />
+                     </div>
+
+
+
+                     <div>
+                        <center>               
+                           <br />
+                           <strong style="border-bottom: 2px solid green;width: 41%;">Recicladora San Miguel, Inyectando Toneladas de Reciclaje a la Recuperación del Planeta</strong>
+                           <br />
+                           www.recicladorasanmiguel.com | Tel: (+506) 2275-1833
+                           <br />
+                        </center>
+                     </div>
 
 
 
 
 
 
-                </div>
+
+                  </div>
+               </t>
             </t>
-        </template>
-    </data>
+         </t>
+      </template>
+      <template id="external_factura_electronica">
+         <t t-if="not o" t-set="o" t-value="doc"/>
+         <t t-if="not company">
+            <!-- Multicompany -->
+            <t t-if="company_id">
+               <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o">
+               <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="else">
+               <t t-set="company" t-value="res_company"/>
+            </t>
+         </t>
+         <t t-call="purchase_order_modifications.external_layout_background_factura_electronica">
+            <t t-raw="0"/>
+         </t>
+      </template>
+      <template id="external_layout_background_factura_electronica">
+         <div class="header"/>
+         <div class="article o_report_layout_background">
+            <t t-raw="0"/>
+         </div>
+      </template>
+   </data>
 </openerp>
