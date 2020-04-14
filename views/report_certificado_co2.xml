@@ -92,7 +92,7 @@
                                     <b>Toneladas de Emisiones de CO2e</b>
                                  </td>
                               </tr>
-                              <tr t-if="o.cantidad > 1 " >
+                              <tr t-if="o.cantidad > 0 " >
                                  <td style="width: 20%; border: 2px solid green;">
                                     <b>
                                        <span class="oe_editable" t-field="o.material_procesado" />

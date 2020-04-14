@@ -20,7 +20,7 @@ class purchase_order(models.Model):
     state = fields.Selection(selection_add=[('quotation_paid', "Pagado")])
     #cajero_id = fields.Char(string="Cajero", readonly=True, copy=False)
     cliente = fields.Char(string="Cliente")
-    cantidad = fields.Integer(string="Cantidad (KG)", default=1)
+    cantidad = fields.Integer(string="Cantidad (KG)")
     material_procesado = fields.Char(string="Material Procesado", default="Desechos Reciclables")
     co2 = fields.Integer(store=True, string="CO2")
     periodo = fields.Char(string="Periodo")
