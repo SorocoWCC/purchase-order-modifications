@@ -131,19 +131,19 @@
                                           <span class="oe_editable" t-field="line.product_id.name" />
                                        </td>
                                        <td class="table_row_materials">
-                                          <span class="oe_editable" t-field="line.product_qty" />
+                                          <span class="oe_editable" t-esc="line.product_qty * 1" />
                                           <t t-set="total_materiales" t-value="total_materiales + line.product_qty"/>
                                        </td>
                                        <td class="table_row_materials">
-                                          <span class="oe_editable" t-esc="line.product_id.factor_conversion * line.product_qty"/>
-                                          <t t-set="total_emisiones" t-value="total_emisiones + line.product_id.factor_conversion * line.product_qty"/>
+                                          <span class="oe_editable" t-esc="'{0:,.2f}'.format((line.product_id.factor_conversion * line.product_qty)/1000)"/>
+                                          <t t-set="total_emisiones" t-value="total_emisiones + ((line.product_id.factor_conversion * line.product_qty)/1000)"/>
                                        </td>
                                     </tr> 
                                  </t>  
                                  <tr>
                                        <td class="table_row_materials"> <b> Total </b> </td>
                                        <td class="table_row_materials"> <b> <t t-esc="total_materiales"/> </b> </td>
-                                       <td class="table_row_materials"> <b> <t t-esc="total_emisiones"/> </b> </td>   
+                                       <td class="table_row_materials"> <b> <t t-esc="'{0:,.2f}'.format(total_emisiones)"/> </b> </td>   
                                     </tr>
                               </t>
                            </tbody>
