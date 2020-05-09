@@ -121,7 +121,7 @@ class purchase_order(models.Model):
 
         line_position = 0
         for line in self.order_line:
-
+            second_picture_validation = False
             line_position += 1
             camara_romana = self.env['camara'].search([['tipo', '=', 'romana']])
             camara_indicador = self.env['camara'].search([['tipo', '=', 'indicador']])
@@ -148,10 +148,20 @@ class purchase_order(models.Model):
                 if line.product_id.name != 'Basura Chatarra' and line.product_id.name != 'Prestamo' and line.product_id.name != 'Rebajo' :
                     if not line.imagen_lleno:
                         for reverse_line in reversed(self.order_line):
+                            print("FOR SOON")
                             if reverse_line.product_id.name != 'Basura Chatarra' and reverse_line.product_id.name != 'Prestamo' and reverse_line.product_id.name != 'Rebajo' and reverse_line.imagen_vacio:
                                 line.imagen_lleno = reverse_line.imagen_vacio
+                                second_picture_validation = True
+                                break
+                                
                     elif not line.imagen_vacio :
                         line.imagen_vacio = res["image"]
+                        second_picture_validation = True
+                        break
+                # Valida la segunda pesa para no agregar fotos a todos los productos
+                if second_picture_validation :
+                    break
+
 
 # Captura la informacion relevante del cliente : Prestamos, Mantenimiento y notas  
     @api.onchange('partner_id')
