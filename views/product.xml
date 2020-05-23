@@ -12,6 +12,7 @@
           <page string="Configuración" groups="base.group_system">
             <group>
               <field  name="sumar_validacion" />
+              <field  name="tomar_foto" />
               <field  name="calcular" />
               <field  name="factor_conversion" />
             </group>           

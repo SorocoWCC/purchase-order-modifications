@@ -135,7 +135,7 @@ class purchase_order(models.Model):
             # Fotos para la primera linea    
             if line_position <= 1 :
                 # No se adjuntan fotos a los productos especiales
-                if line.product_id.name != 'Basura Chatarra' and line.product_id.name != 'Prestamo' and line.product_id.name != 'Rebajo' :
+                if line.product_id.tomar_foto:
 
                     if not line.imagen_lleno :
                         line.imagen_lleno = res["image"]
@@ -145,11 +145,11 @@ class purchase_order(models.Model):
                         break
             # Fotos para doble pesa            
             else:
-                if line.product_id.name != 'Basura Chatarra' and line.product_id.name != 'Prestamo' and line.product_id.name != 'Rebajo' :
+                if not line.product_id.tomar_foto :
                     if not line.imagen_lleno:
                         for reverse_line in reversed(self.order_line):
                             print("FOR SOON")
-                            if reverse_line.product_id.name != 'Basura Chatarra' and reverse_line.product_id.name != 'Prestamo' and reverse_line.product_id.name != 'Rebajo' and reverse_line.imagen_vacio:
+                            if not reverse_line.product_id.tomar_foto and reverse_line.imagen_vacio:
                                 line.imagen_lleno = reverse_line.imagen_vacio
                                 second_picture_validation = True
                                 break
