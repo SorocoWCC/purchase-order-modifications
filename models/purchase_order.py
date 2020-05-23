@@ -135,7 +135,7 @@ class purchase_order(models.Model):
             # Fotos para la primera linea    
             if line_position <= 1 :
                 # No se adjuntan fotos a los productos especiales
-                if line.product_id.tomar_foto:
+                if not line.product_id.tomar_foto:
 
                     if not line.imagen_lleno :
                         line.imagen_lleno = res["image"]
