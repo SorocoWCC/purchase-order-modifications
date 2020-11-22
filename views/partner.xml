@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <data>
+
+      <!-- Vista de formulario - Heredada - Partner -->
+      <record model="ir.ui.view" id="partner_est_view__form">
+        <field name="name">Inherit Form View - Module: Purchase Order Modifications - Object: Partner</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+          <field colspan="2" name="lang" position="after">
+            <field name="control_estadistico"/>
+          </field>
+        </field>
+      </record>
+  </data>
+</odoo>

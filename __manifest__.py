@@ -33,7 +33,8 @@
         'views/movement_conf.xml',
         'views/report_tiquete_compra.xml',
         'views/report_factura_de_compra_fotos.xml',
-        'views/report_certificado_co2.xml'
+        'views/report_certificado_co2.xml',
+        'views/partner.xml'
 
     ],
     # only loaded in demonstration mode

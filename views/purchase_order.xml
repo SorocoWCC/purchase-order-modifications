@@ -55,6 +55,11 @@
               <field name="co2"/>
             </group>
           </page>
+          <page string="Estadística">
+            <group>
+              <field name="control_id" widget="res_partner_many2one" domain = "[('control_estadistico','=',True)]"/>
+            </group>
+          </page>
         </notebook>
       </field>
     </record>

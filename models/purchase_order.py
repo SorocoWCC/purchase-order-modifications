@@ -31,6 +31,7 @@ class purchase_order(models.Model):
     placa_vehiculo= fields.Char (string="Placa")
     informacion = fields.Char (string="Avisos")
     partner_info = fields.Char(compute='_action_partner_info' )
+    control_id = fields.Many2one(comodel_name='res.partner', string='Control Estadístico')
     #mantenimiento_info = fields.Char(compute='_action_allowance', store=True, string="Avisos")
 	#purchase_info_validation = fields.Char(compute='_action_purchase_creation', store=True, string="validacion")
    
